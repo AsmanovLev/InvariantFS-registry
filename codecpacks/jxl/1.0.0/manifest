@@ -1,0 +1,42 @@
+# jxl codecpack (WP16e) — migrated to the WP60 registry manifest format.
+# JPEG -> lossless JXL (JPEG bitstream reconstruction) -- the WP11 lane
+# migrated from a builtin volume.c branch to a pack. This is the builtin ->
+# pack migration proof.
+#
+# The manifest claims algo 4 (INVFS_ALGO_JXL), which the builtin registry
+# holds as an EXTERNAL + PACKONLY placeholder (sniff + probe only, the
+# transcode retired). By the WP16e override rule the pack REPLACES that
+# entry in the materialized registry.
+#
+# encode/decode are the direct cjxl/djxl argv (fixed flags, no shell):
+#   cjxl --lossless_jpeg=1 stores the original JPEG bitstream in the JXL
+#   blob, so djxl reconstructs the exact same bytes (the 1:1 invariant).
+# estimate is the SOF marker-walk helper (jxlest.c, C11/libc only,
+# streaming): prints w*h*3 or 0 when the geometry is unknown.
+name = jxl
+version = 1.0.0
+pack_version = 1
+min_read = 0.3.0
+algo = 4
+codec_id = INVFS_ALGO_JXL
+format_id = jpeg
+family = raw_image
+category = primary
+priority = 100
+type = codec
+caps = wholefile|external
+provides = raw_image
+replaces = builtin:jxl
+conflicts =
+dec_mem = 0
+generation = 1
+depends = cjxl,djxl
+requires = cjxl,djxl
+# JPEG SOI is the input claim. The JXL box + raw codestream magics ride
+# along for the registry-sniff users (the WP10 UNCOMPRESSIBLE retry gate).
+sniff.magic = FFD8FF
+sniff.magic = FF0A
+sniff.magic = 0000000C4A584C20
+encode = cjxl {in} {out} --lossless_jpeg=1
+decode = djxl {in} {out} --output_format=jpeg
+estimate = jxlest estimate {in}

@@ -1,0 +1,37 @@
+# ext4fs codecpack (WP16a/WP16b) — migrated to the WP60 registry manifest
+# format. ext4 filesystem images -> per-file members that flow through the
+# whole codec pipeline (text PPMd batching, binary ZSTD+BCJ batching,
+# generic ZSTD-19). Members are identified by ext4 INODE NUMBER (idx);
+# everything that is not regular-file content (superblock, GDT, bitmaps,
+# inode tables, directory blocks, extent-tree index nodes, journal,
+# reserved/unused/unwritten blocks, past-i_size tails) stays in the recipe
+# verbatim, so bit-rot survives the round trip. The map command makes the
+# pack SEEKABLE (CAP_SEEK): reads splice locally from the !mbrmap map +
+# recipe + member siblings and never exec the tool.
+name = ext4fs
+version = 1.0.0
+pack_version = 1
+min_read = 0.3.0
+algo = 17
+codec_id = INVFS_ALGO_EXT4FS
+format_id = ext4
+family = container
+category = primary
+priority = 100
+type = container
+caps = container|external
+provides = container:ext4,container
+replaces =
+conflicts =
+dec_mem = 0
+generation = 1
+# ext4 superblock magic 0xEF53 (little-endian) at 1024 + 56
+sniff.magic = 53EF
+sniff.offset = 1080
+sniff.ext = ext4,ext4img
+enumerate = bin/ext4fs enumerate {in} {out}
+extract = bin/ext4fs extract {in} {idx} {out}
+strip = bin/ext4fs strip {in} {out}
+rebuild = bin/ext4fs rebuild {recipe} {dir} {out}
+map = bin/ext4fs map {in} {out}
+estimate = bin/ext4fs estimate {in}

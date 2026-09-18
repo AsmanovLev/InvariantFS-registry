@@ -1,0 +1,39 @@
+# splt_test codecpack (WP16a) — migrated to the WP60 registry manifest
+# format. The containerpack ABI proof fixture.
+#
+# SPLT is a trivial container: "SPLT" + u32 LE member count + n u64 LE
+# member lengths + the member payloads concatenated. strip = the header
+# (the recipe); rebuild = splice the member files back under it.
+#
+# The FS side identifies members by INDEX only; the suggested_name column
+# ("chunk<i>") is advisory and rides inside the sibling name. There is no
+# estimate command on purpose: the FS-side ABI default (sum of member
+# usizes + the container's own size) is the admission input.
+# algo 40: test range -- production packs take the low free ids.
+name = splt_test
+version = 1.0.0
+pack_version = 1
+min_read = 0.3.0
+algo = 40
+codec_id = INVFS_ALGO_SPLT
+format_id = splt
+family = container
+category = optional
+priority = 10
+type = container
+caps = container|external
+provides = container:splt,container
+replaces =
+conflicts =
+dec_mem = 0
+generation = 1
+sniff.magic = 53504C54
+sniff.ext = splt
+enumerate = python3 {pack}/splt.py enumerate {in} {out}
+extract = python3 {pack}/splt.py extract {in} {idx} {out}
+strip = python3 {pack}/splt.py strip {in} {out}
+rebuild = python3 {pack}/splt.py rebuild {recipe} {dir} {out}
+# WP16b: the map command makes the pack SEEKABLE (CAP_SEEK): reads splice
+# locally from the recipe + member siblings and never exec the pack.
+map = python3 {pack}/splt.py map {in} {out}
+depends = python3

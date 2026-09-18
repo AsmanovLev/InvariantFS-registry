@@ -1,0 +1,34 @@
+# flacr codecpack — registry alternatives fixture (WP60).
+#
+# The engine implements the FLAC recipe (algo 7, INVFS_ALGO_FLACR) natively;
+# this registry entry's job is to make the raw_audio family explicit so
+# `invfs-pack alternatives raw_audio` can list it and `use raw_audio flacr`
+# can select it for future sweeps. Highest priority in the family.
+#
+# The encode/decode argv name the external `flac` tool; the engine's native
+# flacr path does not exec it. Kept for completeness and for `depends`
+# probing (post-WP59 the registry pack may shadow the builtin).
+name = flacr
+version = 1.0.0
+pack_version = 1
+min_read = 0.3.0
+algo = 7
+codec_id = INVFS_ALGO_FLACR
+format_id = flac
+family = raw_audio
+category = primary
+priority = 100
+type = codec
+caps = batched|external
+provides = raw_audio
+replaces = builtin:flacr
+conflicts =
+dec_mem = 0
+generation = 1
+depends = flac
+recommends = python3
+sniff.magic = 664C6143
+sniff.ext = flac
+encode = flac {in} -o {out}
+decode = flac -d {in} -o {out}
+estimate = flac -s --analyze {in}

@@ -1,0 +1,6 @@
+{
+  "schema": 1,
+  "reserved": true,
+  "note": "kernels/index.json is reserved for kernel-compatibility profiles. No entries yet: the kernel profile set is defined by WP59 (PCK0 fields) and is intentionally empty in the WP60 seed.",
+  "kernels": []
+}

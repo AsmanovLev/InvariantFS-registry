@@ -1,0 +1,41 @@
+# vdi codecpack (WP16a/WP16b) — migrated to the WP60 registry manifest
+# format. VirtualBox VDI disk image decomposition.
+#
+# DYNAMIC (type 1) VDI v1.1 images only. One member: idx 1 "diskimg" = the
+# concatenated allocated-block stream (table order, full cbBlock extents) —
+# a raw disk image padded to a block multiple, the input the rawdisk/ext4
+# container packs decompose further (nested containers). The recipe is every
+# other byte of the file verbatim (header + block allocation map + holes +
+# tail), so rebuild is bit-exact by construction, junk-in-a-hole included.
+# STATIC (type 2) images are declined: a static VDI is a raw disk image with
+# a preamble — rawdisk-pack territory. Differencing images (uuidLink != 0),
+# non-1.1 versions, cbBlockExtra != 0, and corrupt geometry are all declined
+# (exit 3). See vdi.c for the full format documentation + validation list.
+#
+# The sniff keys on the u32 signature 0xBEDA107F at offset 64.
+name = vdi
+version = 1.0.0
+pack_version = 1
+min_read = 0.3.0
+algo = 21
+codec_id = INVFS_ALGO_VDI
+format_id = vdi
+family = container
+category = primary
+priority = 100
+type = container
+caps = container|external
+provides = container:vdi,container
+replaces =
+conflicts =
+dec_mem = 0
+generation = 1
+sniff.offset = 64
+sniff.magic = 7F10DABE
+sniff.ext = vdi
+enumerate = bin/vdi enumerate {in} {out}
+extract = bin/vdi extract {in} {idx} {out}
+strip = bin/vdi strip {in} {out}
+rebuild = bin/vdi rebuild {recipe} {dir} {out}
+map = bin/vdi map {in} {out}
+estimate = bin/vdi estimate {in}

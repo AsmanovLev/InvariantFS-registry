@@ -1,0 +1,42 @@
+# fatfs codecpack (WP16a/WP16b) — migrated to the WP60 registry manifest
+# format. FAT12/16/32 + exFAT disk images -> per-file member inodes. See
+# fatfs.c for the full format documentation (member indexing, recipe
+# layout, decline rules).
+#
+# Sniff: 55AA @510 is the (weak) FAT/exFAT boot signature -- a strict BPB /
+# boot-region parse in enumerate does the real validation and declines
+# anything that merely carries the signature. "EXFAT   " @3 is the exFAT
+# boot signature (second rule, stronger).
+#
+# algo 18: production range (test packs take 40+).
+name = fatfs
+version = 1.0.0
+pack_version = 1
+min_read = 0.3.0
+algo = 18
+codec_id = INVFS_ALGO_FATFS
+format_id = fat
+family = container
+category = primary
+priority = 100
+type = container
+caps = container|external
+provides = container:fat,container
+replaces =
+conflicts =
+dec_mem = 0
+generation = 1
+sniff.magic = 55AA
+sniff.offset = 510
+sniff.magic = 4558464154202020
+sniff.offset = 3
+sniff.ext = img,fat,vfat,exfat
+enumerate = bin/fatfs enumerate {in} {out}
+extract = bin/fatfs extract {in} {idx} {out}
+strip = bin/fatfs strip {in} {out}
+rebuild = bin/fatfs rebuild {recipe} {dir} {out}
+# WP16b: the map command makes the pack SEEKABLE (CAP_SEEK): reads splice
+# locally from the recipe + member siblings and never exec the pack.
+map = bin/fatfs map {in} {out}
+# decode working set = sum(member usize) + 64 MiB (FAT table + walk state)
+estimate = bin/fatfs estimate {in}

@@ -1,0 +1,76 @@
+name: build-registry
+
+# WP60: build the C codecpack helpers STATICALLY (musl preferred,
+# glibc-static fallback), emit per-artifact sha256 + codecpacks/index.json,
+# run the manager regression, and attach release assets on tags.
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install toolchain (musl + glibc-static + python3)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y musl-tools python3
+          # glibc-static fallback is provided by libc6-dev on ubuntu; if the
+          # runner lacks it the build script falls back to a dynamic build
+          # with a warning.
+          sudo apt-get install -y libc6-dev || true
+
+      - name: Build manager
+        run: make manager
+
+      - name: Build helpers statically + refresh index
+        run: |
+          make helpers
+          make index INVFS_PACK_PLATFORM="$(uname -m)-linux-musl"
+
+      - name: Validate manifests
+        run: make check
+
+      - name: Manager regression (file:// repo, no VM)
+        run: bash tools/test-invf-pack.sh
+
+      - name: Stage release tarballs
+        run: bash tools/package-release.sh "$(uname -m)-linux-musl"
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: registry-dist
+          path: |
+            dist/*.tar.gz
+            dist/index.json
+            build/invfs-pack
+
+      - name: Show index summary
+        run: python3 - <<'PY'
+          import json
+          d = json.load(open("dist/index.json"))
+          for p in d["packs"]:
+              arts = ",".join(a["path"] for a in p.get("artifacts", [])) or "(source)"
+              print(f'{p["name"]:12} {p["version"]:8} {p["family"]:10} {arts}')
+          PY
+
+      - name: Release (tags only)
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/*.tar.gz
+            dist/index.json
+            build/invfs-pack
+          generate_release_notes: true

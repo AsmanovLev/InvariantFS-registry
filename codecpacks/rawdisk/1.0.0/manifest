@@ -1,0 +1,45 @@
+# rawdisk codecpack (WP16a/WP16b) — migrated to the WP60 registry manifest
+# format. Raw disk images -> partition members.
+#
+# Decomposes 512-byte-sector disk images with GPT or MBR/EBR partition
+# tables into one member per partition; the members then flow through the
+# whole normal pipeline (text PPMd batching / binary ZSTD(+BCJ) batching /
+# generic ZSTD-19, nested containers included). The recipe (strip) is the
+# RDR1 blob: disk size + the member (idx,off,len) table + every byte
+# OUTSIDE the member extents, verbatim (boot sectors, GPT primary+backup
+# tables, EBRs, and all gaps with arbitrary content). The map command
+# makes the pack SEEKABLE: reads splice locally from the recipe + member
+# siblings and never exec the pack (WP16b MRMP; partitions are contiguous,
+# so one MEMBER range per partition plus RECIPE ranges for the rest).
+#
+# algo 16: the first production containerpack id (test packs live at 40+).
+name = rawdisk
+version = 1.0.0
+pack_version = 1
+min_read = 0.3.0
+algo = 16
+codec_id = INVFS_ALGO_RAWDISK
+format_id = rawdisk
+family = container
+category = primary
+priority = 100
+type = container
+caps = container|external
+provides = container:rawdisk,container
+replaces =
+conflicts =
+dec_mem = 0
+generation = 1
+# GPT: "EFI PART" at LBA1. MBR: 0x55AA at 510 (weak on purpose -- the
+# helper's strict parse is the real gate; a miss declines with exit 3).
+sniff.magic = 4546492050415254
+sniff.offset = 512
+sniff.magic = 55AA
+sniff.offset = 510
+sniff.ext = img,raw
+enumerate = bin/rawdisk enumerate {in} {out}
+extract = bin/rawdisk extract {in} {idx} {out}
+strip = bin/rawdisk strip {in} {out}
+rebuild = bin/rawdisk rebuild {recipe} {dir} {out}
+map = bin/rawdisk map {in} {out}
+estimate = bin/rawdisk estimate {in}

@@ -1,0 +1,32 @@
+# wavpack codecpack — registry alternatives fixture (WP60).
+#
+# WavPack (algo 6, INVFS_ALGO_WV). Same raw_audio family as flacr and ape;
+# lower priority than flacr, non-primary until `invfs-pack use raw_audio
+# wavpack`. Installing it alongside flacr/ape MUST NOT touch either.
+#
+# Helper tool: `wavpack` (+ `wvunpack`). Not installed by invfs-pack -- it
+# only prints the distro command.
+name = wavpack
+version = 1.0.0
+pack_version = 1
+min_read = 0.3.0
+algo = 6
+codec_id = INVFS_ALGO_WV
+format_id = wavpack
+family = raw_audio
+category = optional
+priority = 50
+type = codec
+caps = wholefile|external
+provides = raw_audio
+replaces = builtin:wv
+conflicts =
+dec_mem = 0
+generation = 1
+depends = wavpack
+recommends = python3
+sniff.magic = 7776706B
+sniff.ext = wv
+encode = wavpack {in} -o {out}
+decode = wvunpack {in} -o {out}
+estimate = ls -l {in}

@@ -1,0 +1,41 @@
+# xfs codecpack (WP16 container ABI v1.1) — migrated to the WP60 registry
+# manifest format. Decomposes an XFS filesystem image into per-file
+# members. Members are the regular files reachable from the root
+# directory; idx = inode number (images holding a member with ino > 65535
+# are declined -- the FS idx cap). The recipe carries every non-member byte
+# verbatim (superblocks, AG headers, B+trees, whole inode chunks, directory
+# blocks, the log, free space) plus the range table; rebuild splices member
+# bytes back into their extents bit-exactly.
+#
+# Supported: sb v4/v5, blocksize 4096, inodes 256/512, EXTENTS and
+# single-level-BTREE data forks, shortform/block/leaf directories.
+# Declined: realtime, quota, rmapbt/reflink, nrext64, unknown feature
+# bits, node-format directories, deeper bmap B+trees. See xfs.c.
+name = xfs
+version = 1.0.0
+pack_version = 1
+min_read = 0.3.0
+algo = 19
+codec_id = INVFS_ALGO_XFS
+format_id = xfs
+family = container
+category = primary
+priority = 100
+type = container
+caps = container|external
+provides = container:xfs,container
+replaces =
+conflicts =
+dec_mem = 0
+generation = 1
+sniff.magic = 58465342
+sniff.ext = xfs,xfsimg
+enumerate = bin/xfs enumerate {in} {out}
+extract = bin/xfs extract {in} {idx} {out}
+strip = bin/xfs strip {in} {out}
+rebuild = bin/xfs rebuild {recipe} {dir} {out}
+# WP16b: the map command makes the pack SEEKABLE (CAP_SEEK): reads splice
+# locally from the recipe + member siblings and never exec the pack.
+map = bin/xfs map {in} {out}
+# admission input: sum(member usize) + 64 MiB
+estimate = bin/xfs estimate {in}

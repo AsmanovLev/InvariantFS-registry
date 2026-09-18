@@ -1,0 +1,460 @@
+{
+  "schema": 1,
+  "generated": "2026-09-18T23:30:02Z",
+  "tool": "gen-index.py WP60",
+  "packs": [
+    {
+      "name": "ape",
+      "version": "1.0.0",
+      "pack_version": 1,
+      "algo": 3,
+      "codec_id": "INVFS_ALGO_APE",
+      "format_id": "ape",
+      "family": "raw_audio",
+      "category": "optional",
+      "priority": 50,
+      "type": "codec",
+      "caps": [
+        "wholefile",
+        "external"
+      ],
+      "provides": [
+        "raw_audio"
+      ],
+      "replaces": [
+        "builtin:ape"
+      ],
+      "conflicts": [],
+      "min_read": "0.3.0",
+      "depends": [
+        "mac"
+      ],
+      "recommends": [
+        "python3"
+      ],
+      "manifest": "codecpacks/ape/1.0.0/manifest",
+      "sha256": "codecpacks/ape/1.0.0/sha256",
+      "sniff_ext": [
+        "ape"
+      ]
+    },
+    {
+      "name": "ext4fs",
+      "version": "1.0.0",
+      "pack_version": 1,
+      "algo": 17,
+      "codec_id": "INVFS_ALGO_EXT4FS",
+      "format_id": "ext4",
+      "family": "container",
+      "category": "primary",
+      "priority": 100,
+      "type": "container",
+      "caps": [
+        "container",
+        "external"
+      ],
+      "provides": [
+        "container:ext4",
+        "container"
+      ],
+      "replaces": [],
+      "conflicts": [],
+      "min_read": "0.3.0",
+      "depends": [],
+      "recommends": [],
+      "manifest": "codecpacks/ext4fs/1.0.0/manifest",
+      "sha256": "codecpacks/ext4fs/1.0.0/sha256",
+      "sniff_ext": [
+        "ext4",
+        "ext4img"
+      ]
+    },
+    {
+      "name": "fatfs",
+      "version": "1.0.0",
+      "pack_version": 1,
+      "algo": 18,
+      "codec_id": "INVFS_ALGO_FATFS",
+      "format_id": "fat",
+      "family": "container",
+      "category": "primary",
+      "priority": 100,
+      "type": "container",
+      "caps": [
+        "container",
+        "external"
+      ],
+      "provides": [
+        "container:fat",
+        "container"
+      ],
+      "replaces": [],
+      "conflicts": [],
+      "min_read": "0.3.0",
+      "depends": [],
+      "recommends": [],
+      "manifest": "codecpacks/fatfs/1.0.0/manifest",
+      "sha256": "codecpacks/fatfs/1.0.0/sha256",
+      "sniff_ext": [
+        "img",
+        "fat",
+        "vfat",
+        "exfat"
+      ]
+    },
+    {
+      "name": "flacr",
+      "version": "1.0.0",
+      "pack_version": 1,
+      "algo": 7,
+      "codec_id": "INVFS_ALGO_FLACR",
+      "format_id": "flac",
+      "family": "raw_audio",
+      "category": "primary",
+      "priority": 100,
+      "type": "codec",
+      "caps": [
+        "batched",
+        "external"
+      ],
+      "provides": [
+        "raw_audio"
+      ],
+      "replaces": [
+        "builtin:flacr"
+      ],
+      "conflicts": [],
+      "min_read": "0.3.0",
+      "depends": [
+        "flac"
+      ],
+      "recommends": [
+        "python3"
+      ],
+      "manifest": "codecpacks/flacr/1.0.0/manifest",
+      "sha256": "codecpacks/flacr/1.0.0/sha256",
+      "sniff_ext": [
+        "flac"
+      ]
+    },
+    {
+      "name": "jxl",
+      "version": "1.0.0",
+      "pack_version": 1,
+      "algo": 4,
+      "codec_id": "INVFS_ALGO_JXL",
+      "format_id": "jpeg",
+      "family": "raw_image",
+      "category": "primary",
+      "priority": 100,
+      "type": "codec",
+      "caps": [
+        "wholefile",
+        "external"
+      ],
+      "provides": [
+        "raw_image"
+      ],
+      "replaces": [
+        "builtin:jxl"
+      ],
+      "conflicts": [],
+      "min_read": "0.3.0",
+      "depends": [
+        "cjxl",
+        "djxl"
+      ],
+      "recommends": [],
+      "manifest": "codecpacks/jxl/1.0.0/manifest",
+      "sha256": "codecpacks/jxl/1.0.0/sha256"
+    },
+    {
+      "name": "ntfs",
+      "version": "1.0.0",
+      "pack_version": 1,
+      "algo": 20,
+      "codec_id": "INVFS_ALGO_NTFS",
+      "format_id": "ntfs",
+      "family": "container",
+      "category": "primary",
+      "priority": 100,
+      "type": "container",
+      "caps": [
+        "container",
+        "external"
+      ],
+      "provides": [
+        "container:ntfs",
+        "container"
+      ],
+      "replaces": [],
+      "conflicts": [],
+      "min_read": "0.3.0",
+      "depends": [],
+      "recommends": [],
+      "manifest": "codecpacks/ntfs/1.0.0/manifest",
+      "sha256": "codecpacks/ntfs/1.0.0/sha256",
+      "sniff_ext": [
+        "ntfs"
+      ]
+    },
+    {
+      "name": "p7z",
+      "version": "1.0.0",
+      "pack_version": 1,
+      "algo": 23,
+      "codec_id": "INVFS_ALGO_P7Z",
+      "format_id": "7z",
+      "family": "archive",
+      "category": "primary",
+      "priority": 100,
+      "type": "container",
+      "caps": [
+        "container",
+        "external"
+      ],
+      "provides": [
+        "archive:7z",
+        "archive"
+      ],
+      "replaces": [],
+      "conflicts": [],
+      "min_read": "0.3.0",
+      "depends": [
+        "7zz"
+      ],
+      "recommends": [],
+      "manifest": "codecpacks/p7z/1.0.0/manifest",
+      "sha256": "codecpacks/p7z/1.0.0/sha256",
+      "sniff_ext": [
+        "7z"
+      ]
+    },
+    {
+      "name": "qcow2",
+      "version": "1.0.0",
+      "pack_version": 1,
+      "algo": 22,
+      "codec_id": "INVFS_ALGO_QCOW2",
+      "format_id": "qcow2",
+      "family": "container",
+      "category": "primary",
+      "priority": 100,
+      "type": "container",
+      "caps": [
+        "container",
+        "external"
+      ],
+      "provides": [
+        "container:qcow2",
+        "container"
+      ],
+      "replaces": [],
+      "conflicts": [],
+      "min_read": "0.3.0",
+      "depends": [],
+      "recommends": [],
+      "manifest": "codecpacks/qcow2/1.0.0/manifest",
+      "sha256": "codecpacks/qcow2/1.0.0/sha256",
+      "sniff_ext": [
+        "qcow2"
+      ]
+    },
+    {
+      "name": "raw_image",
+      "version": "1.0.0",
+      "pack_version": 1,
+      "algo": 13,
+      "codec_id": "INVFS_ALGO_RAWIMG",
+      "format_id": "raw_image",
+      "family": "raw_image",
+      "category": "optional",
+      "priority": 50,
+      "type": "codec",
+      "caps": [
+        "wholefile",
+        "external"
+      ],
+      "provides": [
+        "raw_image"
+      ],
+      "replaces": [],
+      "conflicts": [],
+      "min_read": "0.3.0",
+      "depends": [
+        "cjxl",
+        "djxl"
+      ],
+      "recommends": [],
+      "manifest": "codecpacks/raw_image/1.0.0/manifest",
+      "sha256": "codecpacks/raw_image/1.0.0/sha256",
+      "sniff_ext": [
+        "dcm",
+        "pgm",
+        "ppm",
+        "bmp",
+        "tif",
+        "tiff"
+      ]
+    },
+    {
+      "name": "rawdisk",
+      "version": "1.0.0",
+      "pack_version": 1,
+      "algo": 16,
+      "codec_id": "INVFS_ALGO_RAWDISK",
+      "format_id": "rawdisk",
+      "family": "container",
+      "category": "primary",
+      "priority": 100,
+      "type": "container",
+      "caps": [
+        "container",
+        "external"
+      ],
+      "provides": [
+        "container:rawdisk",
+        "container"
+      ],
+      "replaces": [],
+      "conflicts": [],
+      "min_read": "0.3.0",
+      "depends": [],
+      "recommends": [],
+      "manifest": "codecpacks/rawdisk/1.0.0/manifest",
+      "sha256": "codecpacks/rawdisk/1.0.0/sha256",
+      "sniff_ext": [
+        "img",
+        "raw"
+      ]
+    },
+    {
+      "name": "splt_test",
+      "version": "1.0.0",
+      "pack_version": 1,
+      "algo": 40,
+      "codec_id": "INVFS_ALGO_SPLT",
+      "format_id": "splt",
+      "family": "container",
+      "category": "optional",
+      "priority": 10,
+      "type": "container",
+      "caps": [
+        "container",
+        "external"
+      ],
+      "provides": [
+        "container:splt",
+        "container"
+      ],
+      "replaces": [],
+      "conflicts": [],
+      "min_read": "0.3.0",
+      "depends": [
+        "python3"
+      ],
+      "recommends": [],
+      "manifest": "codecpacks/splt_test/1.0.0/manifest",
+      "sha256": "codecpacks/splt_test/1.0.0/sha256",
+      "sniff_ext": [
+        "splt"
+      ]
+    },
+    {
+      "name": "vdi",
+      "version": "1.0.0",
+      "pack_version": 1,
+      "algo": 21,
+      "codec_id": "INVFS_ALGO_VDI",
+      "format_id": "vdi",
+      "family": "container",
+      "category": "primary",
+      "priority": 100,
+      "type": "container",
+      "caps": [
+        "container",
+        "external"
+      ],
+      "provides": [
+        "container:vdi",
+        "container"
+      ],
+      "replaces": [],
+      "conflicts": [],
+      "min_read": "0.3.0",
+      "depends": [],
+      "recommends": [],
+      "manifest": "codecpacks/vdi/1.0.0/manifest",
+      "sha256": "codecpacks/vdi/1.0.0/sha256",
+      "sniff_ext": [
+        "vdi"
+      ]
+    },
+    {
+      "name": "wavpack",
+      "version": "1.0.0",
+      "pack_version": 1,
+      "algo": 6,
+      "codec_id": "INVFS_ALGO_WV",
+      "format_id": "wavpack",
+      "family": "raw_audio",
+      "category": "optional",
+      "priority": 50,
+      "type": "codec",
+      "caps": [
+        "wholefile",
+        "external"
+      ],
+      "provides": [
+        "raw_audio"
+      ],
+      "replaces": [
+        "builtin:wv"
+      ],
+      "conflicts": [],
+      "min_read": "0.3.0",
+      "depends": [
+        "wavpack"
+      ],
+      "recommends": [
+        "python3"
+      ],
+      "manifest": "codecpacks/wavpack/1.0.0/manifest",
+      "sha256": "codecpacks/wavpack/1.0.0/sha256",
+      "sniff_ext": [
+        "wv"
+      ]
+    },
+    {
+      "name": "xfs",
+      "version": "1.0.0",
+      "pack_version": 1,
+      "algo": 19,
+      "codec_id": "INVFS_ALGO_XFS",
+      "format_id": "xfs",
+      "family": "container",
+      "category": "primary",
+      "priority": 100,
+      "type": "container",
+      "caps": [
+        "container",
+        "external"
+      ],
+      "provides": [
+        "container:xfs",
+        "container"
+      ],
+      "replaces": [],
+      "conflicts": [],
+      "min_read": "0.3.0",
+      "depends": [],
+      "recommends": [],
+      "manifest": "codecpacks/xfs/1.0.0/manifest",
+      "sha256": "codecpacks/xfs/1.0.0/sha256",
+      "sniff_ext": [
+        "xfs",
+        "xfsimg"
+      ]
+    }
+  ]
+}

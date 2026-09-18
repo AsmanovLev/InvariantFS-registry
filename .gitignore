@@ -1,0 +1,9 @@
+# WP60 registry build artifacts
+build/
+codecpacks/*/*/bin/
+*.o
+*.a
+*.d
+__pycache__/
+*.pyc
+*.img

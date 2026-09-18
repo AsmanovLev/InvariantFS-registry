@@ -1,0 +1,33 @@
+# ape codecpack — registry alternatives fixture (WP60).
+#
+# Monkey's Audio (algo 3, INVFS_ALGO_APE). Same raw_audio family as flacr and
+# wavpack; lower priority than flacr, so it stays non-primary until the user
+# runs `invfs-pack use raw_audio ape`. Installing it alongside flacr MUST NOT
+# touch flacr (conflict default: install but keep the existing pack).
+#
+# Helper tool: `mac` (Monkey's Audio Codec). Not installed by invfs-pack --
+# it only prints the distro command.
+name = ape
+version = 1.0.0
+pack_version = 1
+min_read = 0.3.0
+algo = 3
+codec_id = INVFS_ALGO_APE
+format_id = ape
+family = raw_audio
+category = optional
+priority = 50
+type = codec
+caps = wholefile|external
+provides = raw_audio
+replaces = builtin:ape
+conflicts =
+dec_mem = 0
+generation = 1
+depends = mac
+recommends = python3
+sniff.magic = 4D414320
+sniff.ext = ape
+encode = mac {in} {out} -c4000
+decode = mac {in} {out} -d
+estimate = ls -l {in}

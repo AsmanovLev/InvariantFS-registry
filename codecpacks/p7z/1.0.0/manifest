@@ -1,0 +1,49 @@
+# p7z codecpack (WP16a/WP16b) — migrated to the WP60 registry manifest
+# format. 7z archives with STORED members -> members.
+#
+# Decomposes 7z archives whose file payloads are all stored with the Copy
+# method (coder id {00}, i.e. `7zz a -t7z -m0=Copy`) into one member per
+# archived file; the members then flow through the whole normal pipeline
+# (text PPMd batching / binary ZSTD(+BCJ) batching / generic ZSTD-19,
+# nested containers included). The recipe (strip) is the P7R1 blob:
+# archive size + the member (idx,off,len) table + every byte OUTSIDE the
+# member extents, verbatim (signature header, the — typically
+# LZMA-compressed — 7z header, gaps, trailing junk). Bit-exactness is by
+# construction: stored bytes are spliced, never re-encoded. The map command
+# makes the pack SEEKABLE (WP16b MRMP; one MEMBER range per stored file,
+# RECIPE ranges for the rest).
+#
+# Compressed/encrypted archives (LZMA/LZMA2/PPMd/BZip2/Deflate/BCJ/7zAES —
+# the 7z defaults!) are DECLINED: their members cannot be rebuilt
+# bit-exactly without re-encoding. RAR is not claimed at all.
+#
+# The helper execs 7zz for LZMA-encoded headers ($P7Z_7ZZ, sibling, PATH) —
+# the sandbox whitelist needs it (WP12d). algo 23: after qcow2 (22).
+name = p7z
+version = 1.0.0
+pack_version = 1
+min_read = 0.3.0
+algo = 23
+codec_id = INVFS_ALGO_P7Z
+format_id = 7z
+family = archive
+category = primary
+priority = 100
+type = container
+caps = container|external
+provides = archive:7z,archive
+replaces =
+conflicts =
+dec_mem = 0
+generation = 1
+depends = 7zz
+requires = 7zz
+sniff.magic = 377ABCAF271C
+sniff.offset = 0
+sniff.ext = 7z
+enumerate = bin/p7z enumerate {in} {out}
+extract = bin/p7z extract {in} {idx} {out}
+strip = bin/p7z strip {in} {out}
+rebuild = bin/p7z rebuild {recipe} {dir} {out}
+map = bin/p7z map {in} {out}
+estimate = bin/p7z estimate {in}
