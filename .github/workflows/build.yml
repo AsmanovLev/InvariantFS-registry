@@ -57,7 +57,8 @@ jobs:
             build/invfs-pack
 
       - name: Show index summary
-        run: python3 - <<'PY'
+        run: |
+          python3 - <<'PY'
           import json
           d = json.load(open("dist/index.json"))
           for p in d["packs"]:
