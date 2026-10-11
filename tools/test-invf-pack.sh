@@ -85,7 +85,9 @@ else
 fi
 
 say "external depends hint (printed, never installed)"
-HINT="$(ip install p7z 2>&1)"
+# Hermetic: CI images may ship 7zz; hide PATH so the dep reads as missing.
+EMPTYBIN="$WORK/emptybin"; mkdir -p "$EMPTYBIN"
+HINT="$(PATH="$EMPTYBIN" ip install p7z 2>&1)"
 echo "$HINT" | grep -qi '7zz' && echo "$HINT" | grep -qiE 'apt|pacman|emerge|xbps|dnf' \
   && ok "missing dep prints distro command" || bad "dep hint"
 
