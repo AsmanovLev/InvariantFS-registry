@@ -911,7 +911,14 @@ static const char *distro_name(char *buf, size_t cap)
     const char *found = "unknown";
     buf[0] = '\0';
     if (text) {
-        char *p = strstr(text, "ID=");
+        /* Match ID= at a line start; a substring search hits VERSION_ID= first. */
+        char *p = text;
+        for (;;) {
+            if (!strncmp(p, "ID=", 3)) break;
+            p = strchr(p, '\n');
+            if (!p) break;
+            p++;
+        }
         if (p) {
             char *v = strchr(p, '=') + 1, *e;
             if (*v == '"') v++;
