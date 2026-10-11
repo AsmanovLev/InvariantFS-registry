@@ -85,17 +85,9 @@ else
 fi
 
 say "external depends hint (printed, never installed)"
-# Hermetic: CI images may ship 7zz; hide PATH so the dep reads as missing.
-EMPTYBIN="$WORK/emptybin"; mkdir -p "$EMPTYBIN"
-HINT="$(PATH="$EMPTYBIN" ip install p7z 2>&1)"
-if echo "$HINT" | grep -qi '7zz' && echo "$HINT" | grep -qiE 'apt|pacman|emerge|xbps|dnf'; then
-  ok "missing dep prints distro command"
-else
-  printf 'DIAG HINT was:\n%s\n' "$HINT"
-  grep '^ID' /etc/os-release 2>/dev/null || true
-  command -v 7zz || echo "DIAG: no 7zz on PATH"
-  bad "dep hint"
-fi
+HINT="$(ip install p7z 2>&1)"
+echo "$HINT" | grep -qi '7zz' && echo "$HINT" | grep -qiE 'apt|pacman|emerge|xbps|dnf' \
+  && ok "missing dep prints distro command" || bad "dep hint"
 
 say "static C helper builds + runs"
 if command -v musl-gcc >/dev/null 2>&1 || command -v x86_64-linux-musl-gcc >/dev/null 2>&1; then

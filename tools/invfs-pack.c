@@ -954,11 +954,14 @@ static void dep_hint(const char *tool, const char *distro)
 
 static void check_deps(const pkg *p, int hard)
 {
-    char distro[64];
+    char distro_buf[64];
+    const char *distro;
     const char *list = hard ? p->depends : p->recommends;
     char *copy, *save = NULL, *tok;
     if (!list || !*list) return;
-    distro_name(distro, sizeof distro);
+    /* Use the canonical family name (debian/arch/gentoo/void/fedora),
+       not the raw ID (ubuntu, linuxmint, ...), which dep_hint cannot match. */
+    distro = distro_name(distro_buf, sizeof distro_buf);
     copy = xstrdup(list);
     for (tok = strtok_r(copy, ",", &save); tok; tok = strtok_r(NULL, ",", &save)) {
         char *e;
