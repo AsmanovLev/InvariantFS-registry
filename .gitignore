@@ -7,3 +7,6 @@ codecpacks/*/*/bin/
 __pycache__/
 *.pyc
 *.img
+dist/
+*.ivpack
+*.so

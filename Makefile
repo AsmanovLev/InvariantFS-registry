@@ -6,13 +6,14 @@
 #   make index      regenerate per-pack sha256 + codecpacks/index.json
 #   make check      gen-index --check (validate required fields)
 #   make test       run tools/test-invf-pack.sh (file:// repo, no VM)
+#   make ivpacks    build + verify dist/ivpack/*.ivpack (WP609r2)
 #   make clean      remove built helpers + manager
 
 CC      ?= cc
 CFLAGS  ?= -std=gnu11 -O2 -Wall -Wextra
 BIN     ?= build
 
-.PHONY: all manager helpers index check test clean
+.PHONY: all manager helpers index check test ivpacks check-ivpacks clean
 
 all: manager helpers index check
 
@@ -34,6 +35,13 @@ check:
 
 test: $(BIN)/invfs-pack
 	bash tools/test-invf-pack.sh
+
+ivpacks: helpers
+	bash tools/package-ivpack.sh
+	bash tools/verify-ivpacks.sh
+
+check-ivpacks:
+	bash tools/verify-ivpacks.sh
 
 clean:
 	rm -rf $(BIN)

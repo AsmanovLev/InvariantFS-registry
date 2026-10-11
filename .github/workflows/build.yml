@@ -47,12 +47,19 @@ jobs:
       - name: Stage release tarballs
         run: bash tools/package-release.sh "$(uname -m)-linux-musl"
 
+      - name: Build .ivpack deliverables (one per pack)
+        run: bash tools/package-ivpack.sh
+
+      - name: Verify .ivpacks (unzip + sha256 + verbatim + dlopen)
+        run: bash tools/verify-ivpacks.sh
+
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: registry-dist
           path: |
             dist/*.tar.gz
+            dist/ivpack/*.ivpack
             dist/index.json
             build/invfs-pack
 
@@ -67,11 +74,13 @@ jobs:
           PY
 
       - name: Release (tags only)
+        # WP609r2: releases carry .ivpack deliverables, never tarballs
+        # again (v1.0.0 tarballs stay as frozen history).
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            dist/*.tar.gz
+            dist/ivpack/*.ivpack
             dist/index.json
             build/invfs-pack
           generate_release_notes: true
