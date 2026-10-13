@@ -9,11 +9,12 @@
 # (payload.* pins below), resolved <pack>/bin first, externals
 # fallback-only — the same bundled-first shape as the ape/flacr fat packs.
 #
-# WP619 argv fix: 1.0.0 `encode = wavpack {in} -o {out}` named a flag the
-# real tool does not accept (wavpack takes a positional output); the fat
-# encode is the tool's own contract `wavpack {in} {out}`. 1.0.0 also
-# omitted `wvunpack` from `depends` although the decode argv needs it;
-# both tools are now in `depends` and in the engine-parsed `requires`.
+# WP619 argv note: both `wavpack {in} -o {out}` and the positional form
+# are accepted by the real 5.8.1 tool (verified against --help and a
+# round-trip at build time), so the encode argv keeps 1.0.0's shape.
+# What 1.0.0 got wrong was omitting `wvunpack` from `depends` although
+# the decode argv needs it; both tools are now in `depends` and in the
+# engine-parsed `requires`.
 # Sniff claims the wvpk magic AND RIFF/WAVE (same rationale as the ape
 # pack), and there is no `estimate` key by the same design (admit with
 # dec_mem = 0, let the guards arbitrate).
@@ -43,7 +44,7 @@ sniff.offset = 0
 sniff.magic = 57415645
 sniff.offset = 8
 sniff.ext = wv,wav
-encode = wavpack {in} {out}
+encode = wavpack {in} -o {out}
 decode = wvunpack {in} -o {out}
 payload.version = 5.8.1
 payload.url = https://github.com/dbry/WavPack/releases/download/5.8.1/wavpack-5.8.1.tar.xz
