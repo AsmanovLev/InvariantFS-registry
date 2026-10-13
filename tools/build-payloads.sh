@@ -1,7 +1,7 @@
 #!/bin/bash
 # build-payloads.sh — WP619: verify + statically build the fat-pack payloads.
 #
-# For each fat pack (ape/flacr/wavpack): read the payload.* pins from the
+# For each fat pack (ape/flacr/wavpack/nbli): read the payload.* pins from the
 # pack's manifest (the manifest is the single source of truth), sha256-
 # verify the colocated payload/<file>, build it statically, and install
 # the payload.bin tools into <pack>/bin/ (gitignored, CI-only — releases
@@ -38,7 +38,7 @@ JOBS="${INVFS_PAYLOAD_JOBS:-$(nproc 2>/dev/null || echo 2)}"
 KEEP="${INVFS_PAYLOAD_KEEP_TREE:-0}"
 WORK="$ROOT/build/payloads"
 
-FATPACKS_DEFAULT="ape flacr wavpack"
+FATPACKS_DEFAULT="ape flacr wavpack nbli"
 
 say()  { printf '%s\n' "$*"; }
 fail() { printf 'build-payloads: FAIL: %s\n' "$*" >&2; exit 1; }
@@ -191,6 +191,32 @@ build_mac() {
     [ "$KEEP" = 1 ] || rm -rf "$t"
 }
 
+build_nbli() {
+    # NBLI prototype v0.4: open prototype sources only (src/NBLI +
+    # src/imageio + src/FileIO.h + LICENSE + README at 6561fc8; no
+    # src/fNBLI, no prebuilt binaries -- the closed fNBLI binary is
+    # disqualified by policy and never enters the payload). Single g++
+    # link, glibc-static C++ (no musl libstdc++ on a stock distro -- the
+    # same reason as flac/mac; file IO only, so portable like the
+    # README's documented glibc-static fallback).
+    # Upstream case bug: src/imageio/uPNG/uPNG.c includes "upng.h" but
+    # the file is uPNG.h. The lowercase name is linked inside the
+    # UNPACKED tree (the hash-pinned payload stays pristine).
+    local dir="$1" tarball="$2" t="$WORK/nbli"
+    rm -rf "$t"; mkdir -p "$t"
+    tar -xzf "$tarball" -C "$t"
+    local src="$t/nbli-payload"
+    [ -f "$src/src/NBLI/main.cpp" ] || fail "nbli: no src/NBLI/main.cpp under $t"
+    ( cd "$src" && \
+      ln -sf uPNG.h src/imageio/uPNG/upng.h && \
+      "${CXX:-g++}" -static -O2 -Wall \
+        src/NBLI/main.cpp src/imageio/*.c src/imageio/uPNG/*.c src/NBLI/NBLI.cpp \
+        -o nbli >/tmp/invfs-wp620-nbli-build.log 2>&1 \
+    ) || { tail -n 20 /tmp/invfs-wp620-nbli-build.log 2>/dev/null; fail "nbli build failed"; }
+    install_bins "$dir" "$(mget "$dir/manifest" payload.bin)" "$src"
+    [ "$KEEP" = 1 ] || rm -rf "$t"
+}
+
 build_pack() {
     local name="$1" dir tarball
     dir="$(packdir "$name")"
@@ -202,6 +228,7 @@ build_pack() {
         ape)     build_mac "$dir" "$tarball" ;;
         flacr)   build_flac "$dir" "$tarball" ;;
         wavpack) build_wavpack "$dir" "$tarball" ;;
+        nbli)    build_nbli "$dir" "$tarball" ;;
         *) fail "no payload builder for pack $name" ;;
     esac
     disk

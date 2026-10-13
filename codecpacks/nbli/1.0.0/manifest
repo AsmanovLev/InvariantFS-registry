@@ -1,0 +1,76 @@
+# nbli codecpack — NBLI prototype v0.4 (algo 16, INVFS_ALGO_NBLI).
+#
+# Open-prototype leg of the WP620 two-way photo handler. Default stays jxl;
+# nbli is opt-in (`-o photo_codec=nbli` / `INVFS_PHOTO_CODEC=nbli`). The
+# engine's PNG lane drives this pack's encode/decode trampolines directly.
+# Lane-driven pack: NO sniff keys, so the WP13 whole-file loop and the
+# WP103 try-last loop never offer it a file (both require pc->sniff) and it
+# can neither mask nor be masked by another pack. The stored shape is the
+# PNGR one with the pixel codec swapped: the NBLI blob in a "name!nbli"
+# sibling plus the same IVPN recipe (deflate replica of the original IDAT).
+#
+# NBLI is single-image-only (no inter-frame coding): the lane is a per-file
+# codec choice, not a series mode. JPEG input is NOT claimed: NBLI has no
+# JPEG-bitstream-reconstruction mode (that is the JXL lane's whole trick),
+# so on JPEG the photo handler keeps the JXL path whatever the knob says.
+#
+# Payload: open NBLI prototype sources ONLY (src/NBLI + src/imageio +
+# src/FileIO.h + LICENSE + README at upstream commit 6561fc8), built
+# static at pack-build time (payload.bin). The closed fNBLI binary is
+# disqualified by policy: never downloaded, never staged, never executed.
+# The prebuilt NBLI / NBLI.exe / fNBLI / fNBLI.exe files the upstream tree
+# ships are stripped from the payload, and src/fNBLI is not vendored.
+#
+# Payload construction (reproducible):
+#   git clone https://github.com/WangXuan95/NBLI && git checkout 6561fc8
+#   keep {LICENSE, README.md, src/NBLI, src/imageio, src/FileIO.h},
+#   drop everything else (src/fNBLI, prebuilt binaries, image/, .git),
+#   find nbli-payload -type f | sort |
+#     tar --mtime='2024-09-01' --no-recursion -czf nbli-6561fc8.tar.gz -T -
+#
+# Build note: src/imageio/uPNG/uPNG.c includes "upng.h" (lowercase) but the
+# file is uPNG.h -- an upstream case bug. The build leg links the lowercase
+# name to the real header inside the UNPACKED build tree (never in the
+# hash-pinned payload), the same class of build-tree-only fix as the
+# WP619 mac wide-stdio shim.
+#
+# NBLI CLI (v0.4): input .png/.ppm/.pgm/.pnm, output .nbli (encode) and the
+# reverse (decode). Explicit -o is REQUIRED: a bare positional second arg
+# is parsed as another INPUT (verified: `nbli a.png a.nbli` compresses a.png
+# to its default name, then tries to decompress a.nbli). -f forces
+# overwrite. Only 8-bit RGB and gray round-trip: RGBA drops alpha with a
+# warning, 16-bit and interlaced are refused -- the lane's decode-back
+# pixel memcmp is what refuses those files, never this argv.
+#
+# Payload license: GPL-3.0-only (upstream LICENSE). External tool only
+# (fork+exec, never linked): no engine license impact.
+name = nbli
+version = 1.0.0
+pack_version = 1
+min_read = 0.3.0
+algo = 16
+codec_id = INVFS_ALGO_NBLI
+format_id = png
+family = raw_image
+category = optional
+priority = 40
+type = codec
+caps = wholefile|external
+provides = raw_image
+replaces =
+conflicts =
+dec_mem = 0
+generation = 1
+depends = nbli
+requires = nbli
+# NBLI pins input AND output names to extensions (like the wavpack pack):
+# the engine stages encode in/out as in.png/out.nbli and decode in/out as
+# in.nbli/out.png (src/codecs/codec.c pack_buffer_io).
+payload.version = 6561fc8
+payload.url = https://github.com/WangXuan95/NBLI
+payload.sha256 = 7b23b512380c3101fc7118c95ad335738ae3e6161448eb16ce7e43d7be2f880c
+payload.bin = nbli
+blob_ext = .nbli
+raw_ext = .png
+encode = nbli -f {in} -o {out}
+decode = nbli -f {in} -o {out}
