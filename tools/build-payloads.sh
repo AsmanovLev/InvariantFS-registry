@@ -125,20 +125,24 @@ build_wavpack() {
 }
 
 build_flac() {
-    # FLAC 1.5.0: C + C++ (libFLAC++/flac CLI), autotools. glibc -static
+    # FLAC 1.5.0: C + C++ (libFLAC++/flac CLI), autotools. glibc-static
     # C++ (no musl libstdc++ exists); ogg disabled — the pack handles
-    # .flac/.wav, never Ogg FLAC (configure must accept --disable-ogg).
+    # .flac/.wav, never Ogg FLAC. LDFLAGS must be -all-static, not
+    # -static (see below), but that flag is libtool-only: it must NOT be
+    # present at configure time (the raw compiler chokes on it and the
+    # C-compiler test fails), so configure runs clean and the flag is
+    # passed on the make command line instead.
     local dir="$1" tarball="$2" t="$WORK/flac"
     rm -rf "$t"; mkdir -p "$t"
     tar -xf "$tarball" -C "$t"
     local src="$t/$(ls "$t")"
     ( cd "$src" && \
       ./configure CC="${CC:-cc}" CXX="${CXX:-g++}" \
-        CFLAGS="-O2" CXXFLAGS="-O2 -static" LDFLAGS="-static" \
+        CFLAGS="-O2" CXXFLAGS="-O2" \
         --disable-shared --enable-static --disable-ogg \
         --disable-doxygen-docs --disable-examples --disable-cpplibs-test \
         >/tmp/invfs-wp619-flac-config.log 2>&1 && \
-      make -j "$JOBS" >/tmp/invfs-wp619-flac-build.log 2>&1 \
+      make -j "$JOBS" 'LDFLAGS=-all-static' >/tmp/invfs-wp619-flac-build.log 2>&1 \
     ) || { tail -n 20 /tmp/invfs-wp619-flac-config.log /tmp/invfs-wp619-flac-build.log 2>/dev/null; fail "flac build failed"; }
     install_bins "$dir" "$(mget "$dir/manifest" payload.bin)" \
         "$src/src/flac" "$src/src/flac/.libs"
