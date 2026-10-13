@@ -149,6 +149,21 @@ is absent, the script falls back to `cc -static`. In this container
 `musl-gcc` was absent, so the helpers were verified as glibc-static
 (`ldd` reports "not a dynamic executable").
 
+## Payloads (WP619 — fat packs)
+
+`ape`, `flacr` and `wavpack` used to be manifest-only: they named an
+external tool (`depends = mac/flac/wavpack`) and failed wherever that
+tool was missing. Their `1.1.0` releases bundle a statically built
+payload instead: the upstream tarball is vendored under
+`codecpacks/<name>/1.1.0/payload/`, pinned by `payload.version` /
+`payload.url` / `payload.sha256` in the manifest, and built by
+`bash tools/build-payloads.sh [verify|build|clean] [pack ...]`
+(musl-static C, glibc-`static` C++ — no musl libstdc++ exists; the CLIs
+do file IO only, so both are portable). The engine resolves
+`<pack>/bin/<tool>` before PATH, so the bundled payload is preferred
+and the external tool is fallback-only. `bin/` is never committed
+(releases carry it via `tools/package-release.sh`).
+
 ## License
 
 GPL-2.0-only (matches the FS).

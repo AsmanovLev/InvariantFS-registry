@@ -1,0 +1,52 @@
+# flacr codecpack — FLAC (algo 7, INVFS_ALGO_FLACR).
+#
+# The highest-priority member of the raw_audio family (priority 100), so
+# `invfs-pack alternatives raw_audio` lists it as the default primary and
+# `use raw_audio flacr` selects it for future sweeps.
+#
+# WP619: fattened. 1.0.0 was manifest-only (`depends = flac` with no
+# bundled payload). 1.1.0 bundles a statically built `flac` (payload.*
+# pins below), resolved <pack>/bin first, external `flac` fallback-only —
+# the same bundled-first shape as the ape/wavpack fat packs.
+#
+# Engine note (honest, not a defect of this pack): algo 7 is a builtin
+# CONTAINER entry (the native flacx/APE lane), and codec.c pack_register
+# silently skips manifests naming builtin container algos — so this pack
+# never shadows the native lane. The fat payload still matters: the
+# manager installs/verifies it, the pins stop version drift for anyone
+# resolving `flac` through the pack dir, and the disaster case (no OS
+# flac) keeps a working encoder/decoder. No `estimate` key by design,
+# same rationale as the ape pack (admit with dec_mem = 0, let the
+# encode + decode-back memcmp + size guards arbitrate).
+name = flacr
+version = 1.1.0
+pack_version = 1
+min_read = 0.3.0
+algo = 7
+codec_id = INVFS_ALGO_FLACR
+format_id = flac
+family = raw_audio
+category = primary
+priority = 100
+type = codec
+caps = batched|external
+provides = raw_audio
+replaces = builtin:flacr
+conflicts =
+dec_mem = 0
+generation = 2
+depends = flac
+requires = flac
+recommends = python3
+sniff.magic = 664C6143
+sniff.magic = 52494646
+sniff.offset = 0
+sniff.magic = 57415645
+sniff.offset = 8
+sniff.ext = flac,wav
+encode = flac {in} -o {out}
+decode = flac -d {in} -o {out}
+payload.version = 1.5.0
+payload.url = https://downloads.xiph.org/releases/flac/flac-1.5.0.tar.xz
+payload.sha256 = f2c1c76592a82ffff8413ba3c4a1299b6c7ab06c734dee03fd88630485c2b920
+payload.bin = flac

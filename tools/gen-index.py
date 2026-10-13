@@ -74,6 +74,14 @@ def write_sha256_manifest(packdir):
     files = []
     for dirpath, dirnames, filenames in os.walk(packdir):
         dirnames.sort()
+        # WP619: bin/ holds CI-only built helpers (never committed,
+        # .gitignored). A listing that names them breaks installs from
+        # the raw tree (the manager refuses on missing files), so the
+        # listing covers committed files only. Release-time artifact
+        # hashes still ride in index.json (build_entry, below) whenever
+        # bin/ is present at package time.
+        if "bin" in dirnames:
+            dirnames.remove("bin")
         for fn in sorted(filenames):
             if fn == "sha256":
                 continue

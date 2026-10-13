@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generated": "2026-09-18T23:30:02Z",
+  "generated": "2026-10-13T12:38:12Z",
   "tool": "gen-index.py WP60",
   "packs": [
     {
@@ -36,6 +36,49 @@
       "sha256": "codecpacks/ape/1.0.0/sha256",
       "sniff_ext": [
         "ape"
+      ]
+    },
+    {
+      "name": "ape",
+      "version": "1.1.0",
+      "pack_version": 1,
+      "algo": 3,
+      "codec_id": "INVFS_ALGO_APE",
+      "format_id": "ape",
+      "family": "raw_audio",
+      "category": "optional",
+      "priority": 50,
+      "type": "codec",
+      "caps": [
+        "wholefile",
+        "external"
+      ],
+      "provides": [
+        "raw_audio"
+      ],
+      "replaces": [
+        "builtin:ape"
+      ],
+      "conflicts": [],
+      "min_read": "0.3.0",
+      "depends": [
+        "mac"
+      ],
+      "recommends": [
+        "python3"
+      ],
+      "manifest": "codecpacks/ape/1.1.0/manifest",
+      "sha256": "codecpacks/ape/1.1.0/sha256",
+      "sniff_ext": [
+        "ape",
+        "wav"
+      ],
+      "artifacts": [
+        {
+          "platform": "x86_64-linux-musl",
+          "path": "codecpacks/ape/1.1.0/bin/mac",
+          "sha256": "5a9c3e1519692fe7f1a6dbce77380069a1e9d6049ebd08022d7e6cd12b8480e2"
+        }
       ]
     },
     {
@@ -135,6 +178,49 @@
       "sha256": "codecpacks/flacr/1.0.0/sha256",
       "sniff_ext": [
         "flac"
+      ]
+    },
+    {
+      "name": "flacr",
+      "version": "1.1.0",
+      "pack_version": 1,
+      "algo": 7,
+      "codec_id": "INVFS_ALGO_FLACR",
+      "format_id": "flac",
+      "family": "raw_audio",
+      "category": "primary",
+      "priority": 100,
+      "type": "codec",
+      "caps": [
+        "batched",
+        "external"
+      ],
+      "provides": [
+        "raw_audio"
+      ],
+      "replaces": [
+        "builtin:flacr"
+      ],
+      "conflicts": [],
+      "min_read": "0.3.0",
+      "depends": [
+        "flac"
+      ],
+      "recommends": [
+        "python3"
+      ],
+      "manifest": "codecpacks/flacr/1.1.0/manifest",
+      "sha256": "codecpacks/flacr/1.1.0/sha256",
+      "sniff_ext": [
+        "flac",
+        "wav"
+      ],
+      "artifacts": [
+        {
+          "platform": "x86_64-linux-musl",
+          "path": "codecpacks/flacr/1.1.0/bin/flac",
+          "sha256": "c642404bb97b994b1be14308d90c1344b6612b495a8c1e8042e930bc2dc3ff69"
+        }
       ]
     },
     {
@@ -423,6 +509,55 @@
       "sha256": "codecpacks/wavpack/1.0.0/sha256",
       "sniff_ext": [
         "wv"
+      ]
+    },
+    {
+      "name": "wavpack",
+      "version": "1.1.0",
+      "pack_version": 1,
+      "algo": 6,
+      "codec_id": "INVFS_ALGO_WV",
+      "format_id": "wavpack",
+      "family": "raw_audio",
+      "category": "optional",
+      "priority": 50,
+      "type": "codec",
+      "caps": [
+        "wholefile",
+        "external"
+      ],
+      "provides": [
+        "raw_audio"
+      ],
+      "replaces": [
+        "builtin:wv"
+      ],
+      "conflicts": [],
+      "min_read": "0.3.0",
+      "depends": [
+        "wavpack",
+        "wvunpack"
+      ],
+      "recommends": [
+        "python3"
+      ],
+      "manifest": "codecpacks/wavpack/1.1.0/manifest",
+      "sha256": "codecpacks/wavpack/1.1.0/sha256",
+      "sniff_ext": [
+        "wv",
+        "wav"
+      ],
+      "artifacts": [
+        {
+          "platform": "x86_64-linux-musl",
+          "path": "codecpacks/wavpack/1.1.0/bin/wavpack",
+          "sha256": "7830d5e588a844ccda86b30721b50c859cbb97e33ad348e2e7d354998d3b0f6c"
+        },
+        {
+          "platform": "x86_64-linux-musl",
+          "path": "codecpacks/wavpack/1.1.0/bin/wvunpack",
+          "sha256": "0dccbf89d2b16a0c7f10fb19253284745cb2540ba8cb794998e61b7660bb29e0"
+        }
       ]
     },
     {
