@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generated": "2026-10-13T14:44:30Z",
+  "generated": "2026-10-13T15:06:04Z",
   "tool": "gen-index.py WP60",
   "packs": [
     {
@@ -266,14 +266,7 @@
       ],
       "recommends": [],
       "manifest": "codecpacks/nbli/1.0.0/manifest",
-      "sha256": "codecpacks/nbli/1.0.0/sha256",
-      "artifacts": [
-        {
-          "platform": "x86_64-linux-musl",
-          "path": "codecpacks/nbli/1.0.0/bin/nbli",
-          "sha256": "6501fed6fa463313a0b05cbaf7d6fb7be922ceeb61b146ba38a668270e2ab8bf"
-        }
-      ]
+      "sha256": "codecpacks/nbli/1.0.0/sha256"
     },
     {
       "name": "ntfs",
