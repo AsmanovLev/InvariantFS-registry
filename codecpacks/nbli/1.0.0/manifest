@@ -1,4 +1,4 @@
-# nbli codecpack — NBLI prototype v0.4 (algo 16, INVFS_ALGO_NBLI).
+# nbli codecpack — NBLI prototype v0.4 (algo 25, INVFS_ALGO_NBLI).
 #
 # Open-prototype leg of the WP620 two-way photo handler. Default stays jxl;
 # nbli is opt-in (`-o photo_codec=nbli` / `INVFS_PHOTO_CODEC=nbli`). The
@@ -6,7 +6,7 @@
 # Lane-driven, but NOT sniff-free: one sniff.magic (the PNG signature) is
 # claimed so the WP103 try-last loop skips it (that loop only offers
 # claim-free packs a trial run, and a trial nbli encode on every binary
-# file would fork+exec per file and stamp GENERIC_GUARD{16} over the
+# file would fork+exec per file and stamp GENERIC_GUARD{25} over the
 # generic floor's verdict). The WP13 claimed loop can therefore only offer
 # it PNG-magic files -- which the builtin PNG branch always decides first,
 # so in practice only <33-byte PNG-magic garbage ever arrives there.
@@ -54,7 +54,7 @@ name = nbli
 version = 1.0.0
 pack_version = 1
 min_read = 0.3.0
-algo = 16
+algo = 25
 codec_id = INVFS_ALGO_NBLI
 format_id = png
 family = raw_image

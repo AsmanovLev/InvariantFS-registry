@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generated": "2026-10-13T15:06:04Z",
+  "generated": "2026-10-13T16:31:20Z",
   "tool": "gen-index.py WP60",
   "packs": [
     {
@@ -244,7 +244,7 @@
       "name": "nbli",
       "version": "1.0.0",
       "pack_version": 1,
-      "algo": 16,
+      "algo": 25,
       "codec_id": "INVFS_ALGO_NBLI",
       "format_id": "png",
       "family": "raw_image",
@@ -266,7 +266,14 @@
       ],
       "recommends": [],
       "manifest": "codecpacks/nbli/1.0.0/manifest",
-      "sha256": "codecpacks/nbli/1.0.0/sha256"
+      "sha256": "codecpacks/nbli/1.0.0/sha256",
+      "artifacts": [
+        {
+          "platform": "x86_64-linux-musl",
+          "path": "codecpacks/nbli/1.0.0/bin/nbli",
+          "sha256": "6501fed6fa463313a0b05cbaf7d6fb7be922ceeb61b146ba38a668270e2ab8bf"
+        }
+      ]
     },
     {
       "name": "ntfs",
