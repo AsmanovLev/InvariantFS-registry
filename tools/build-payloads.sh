@@ -152,7 +152,18 @@ build_flac() {
 build_mac() {
     # Monkey's Audio SDK: C++, cmake (the Arch `mac` PKGBUILD shape:
     # plain `cmake -S . -B build && cmake --build build`). glibc -static
-    # C++ for the same reason as flac. Produces the `mac` CLI.
+    # C++ for the same reason as flac. -DBUILD_SHARED=OFF: with shared
+    # enabled the -static CXXFLAGS leak into the libMAC.so link and ld
+    # dies on crtbeginT; we only need the `macutil` CLI target (which
+    # emits `mac`, lowercase on Linux).
+    #
+    # Wide-stdio shim: glibc-static + fwprintf/fputws segfaults on this
+    # toolchain (see payload/wrap-wide.c for the minimal repro), and the
+    # SDK's console is all-wide. Upstream stays hash-pristine: we compile
+    # wrap-wide.c ourselves and re-run cmake's own link line (from
+    # build/CMakeFiles/macutil.dir/link.txt) with the object + --wrap
+    # flags appended. The shim is output-text only; codec bytes, exit
+    # codes and error paths are the upstream's.
     local dir="$1" tarball="$2" t="$WORK/mac"
     rm -rf "$t"; mkdir -p "$t"
     ( cd "$t" && unzip -q "$tarball" ) || fail "mac unzip failed"
@@ -160,12 +171,21 @@ build_mac() {
     [ -f "$src/CMakeLists.txt" ] || src="$t/$(ls "$t" | head -n 1)"
     [ -f "$src/CMakeLists.txt" ] || fail "mac: no CMakeLists.txt under $t"
     ( cd "$src" && \
-      cmake -S . -B build -DCMAKE_BUILD_TYPE=Release \
-        -DCMAKE_CXX_FLAGS="-static -O2" \
-        -DCMAKE_EXE_LINKER_FLAGS="-static -static-libgcc -static-libstdc++" \
+      cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED=OFF \
+        -DCMAKE_EXE_LINKER_FLAGS="-static" \
         >/tmp/invfs-wp619-mac-cmake.log 2>&1 && \
-      cmake --build build -j "$JOBS" >/tmp/invfs-wp619-mac-build.log 2>&1 \
+      cmake --build build --target macutil -j "$JOBS" >/tmp/invfs-wp619-mac-build.log 2>&1 \
     ) || { tail -n 20 /tmp/invfs-wp619-mac-cmake.log /tmp/invfs-wp619-mac-build.log 2>/dev/null; fail "mac cmake build failed"; }
+    # relink with the wide-stdio shim (see above). link.txt holds paths
+    # relative to build/, and must stay ONE line: strip its trailing
+    # newline before appending the shim object + --wrap flags.
+    ( cd "$src" && \
+      cc -std=c11 -O2 -Wall -c "$ROOT/$dir/payload/wrap-wide.c" -o build/wrap-wide.o && \
+      cp build/CMakeFiles/macutil.dir/link.txt build/relink.sh && \
+      perl -pi -e 'chomp if eof' build/relink.sh && \
+      printf ' %s -Wl,--wrap=fwprintf -Wl,--wrap=fputws\n' wrap-wide.o >> build/relink.sh && \
+      ( cd build && bash relink.sh ) \
+    ) || fail "mac shim relink failed"
     install_bins "$dir" "$(mget "$dir/manifest" payload.bin)" \
         "$src/build" "$src/build/Console" "$src/build/Source/Console"
     [ "$KEEP" = 1 ] || rm -rf "$t"
@@ -175,7 +195,7 @@ build_pack() {
     local name="$1" dir tarball
     dir="$(packdir "$name")"
     verify_pack "$name"
-    tarball="$(ls "$dir"/payload/* | head -n 1)"
+    tarball="$ROOT/$(ls "$dir"/payload/* | head -n 1)"
     disk
     say "  build $name: $(basename "$tarball") ($(du -h "$tarball" | cut -f1))"
     case "$name" in
