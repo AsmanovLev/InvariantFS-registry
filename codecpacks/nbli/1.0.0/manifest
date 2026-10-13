@@ -3,11 +3,17 @@
 # Open-prototype leg of the WP620 two-way photo handler. Default stays jxl;
 # nbli is opt-in (`-o photo_codec=nbli` / `INVFS_PHOTO_CODEC=nbli`). The
 # engine's PNG lane drives this pack's encode/decode trampolines directly.
-# Lane-driven pack: NO sniff keys, so the WP13 whole-file loop and the
-# WP103 try-last loop never offer it a file (both require pc->sniff) and it
-# can neither mask nor be masked by another pack. The stored shape is the
-# PNGR one with the pixel codec swapped: the NBLI blob in a "name!nbli"
-# sibling plus the same IVPN recipe (deflate replica of the original IDAT).
+# Lane-driven, but NOT sniff-free: one sniff.magic (the PNG signature) is
+# claimed so the WP103 try-last loop skips it (that loop only offers
+# claim-free packs a trial run, and a trial nbli encode on every binary
+# file would fork+exec per file and stamp GENERIC_GUARD{16} over the
+# generic floor's verdict). The WP13 claimed loop can therefore only offer
+# it PNG-magic files -- which the builtin PNG branch always decides first,
+# so in practice only <33-byte PNG-magic garbage ever arrives there.
+#
+# The stored shape is the PNGR one with the pixel codec swapped: the
+# NBLI blob in a "name!nbli" sibling plus the same IVPN recipe (deflate
+# replica of the original IDAT).
 #
 # NBLI is single-image-only (no inter-frame coding): the lane is a per-file
 # codec choice, not a series mode. JPEG input is NOT claimed: NBLI has no
@@ -63,6 +69,7 @@ dec_mem = 0
 generation = 1
 depends = nbli
 requires = nbli
+sniff.magic = 89504E470D0A1A0A
 # NBLI pins input AND output names to extensions (like the wavpack pack):
 # the engine stages encode in/out as in.png/out.nbli and decode in/out as
 # in.nbli/out.png (src/codecs/codec.c pack_buffer_io).
