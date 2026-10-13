@@ -53,7 +53,11 @@ sniff.offset = 8
 sniff.ext = ape,wav
 encode = mac {in} {out} -c4000
 decode = mac {in} {out} -d
+# WP619: mac detects the decode input format by extension (an
+# extensionless staged blob fails with Error 1002), so the engine stages
+# decode inputs as in.ape (src/codecs/codec.c pack_buffer_io).
 payload.version = 12.95
 payload.url = https://monkeysaudio.com/files/MAC_1295_SDK.zip
 payload.sha256 = dfed316cb4aeecfdbc2d28d32a0dbe54785cc737982a97d3fcf85849b343188b
 payload.bin = mac
+blob_ext = .ape

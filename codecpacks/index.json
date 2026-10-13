@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generated": "2026-10-13T12:21:52Z",
+  "generated": "2026-10-13T12:38:12Z",
   "tool": "gen-index.py WP60",
   "packs": [
     {
@@ -72,6 +72,13 @@
       "sniff_ext": [
         "ape",
         "wav"
+      ],
+      "artifacts": [
+        {
+          "platform": "x86_64-linux-musl",
+          "path": "codecpacks/ape/1.1.0/bin/mac",
+          "sha256": "5a9c3e1519692fe7f1a6dbce77380069a1e9d6049ebd08022d7e6cd12b8480e2"
+        }
       ]
     },
     {
@@ -207,6 +214,13 @@
       "sniff_ext": [
         "flac",
         "wav"
+      ],
+      "artifacts": [
+        {
+          "platform": "x86_64-linux-musl",
+          "path": "codecpacks/flacr/1.1.0/bin/flac",
+          "sha256": "c642404bb97b994b1be14308d90c1344b6612b495a8c1e8042e930bc2dc3ff69"
+        }
       ]
     },
     {
@@ -532,6 +546,18 @@
       "sniff_ext": [
         "wv",
         "wav"
+      ],
+      "artifacts": [
+        {
+          "platform": "x86_64-linux-musl",
+          "path": "codecpacks/wavpack/1.1.0/bin/wavpack",
+          "sha256": "7830d5e588a844ccda86b30721b50c859cbb97e33ad348e2e7d354998d3b0f6c"
+        },
+        {
+          "platform": "x86_64-linux-musl",
+          "path": "codecpacks/wavpack/1.1.0/bin/wvunpack",
+          "sha256": "0dccbf89d2b16a0c7f10fb19253284745cb2540ba8cb794998e61b7660bb29e0"
+        }
       ]
     },
     {

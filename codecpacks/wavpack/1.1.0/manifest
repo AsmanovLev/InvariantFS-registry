@@ -46,7 +46,14 @@ sniff.offset = 8
 sniff.ext = wv,wav
 encode = wavpack {in} -o {out}
 decode = wvunpack {in} -o {out}
+# WP619: wavpack pins input AND output names to extensions (encode of an
+# extensionless input fails looking for in.wav; decode of one fails too;
+# encode output is forced to out.wv and a bare -o out decodes to out.wav),
+# so the engine stages encode in/out as in.wav/out.wv and decode in/out as
+# in.wv/out.wav (src/codecs/codec.c pack_buffer_io).
 payload.version = 5.8.1
 payload.url = https://github.com/dbry/WavPack/releases/download/5.8.1/wavpack-5.8.1.tar.xz
 payload.sha256 = 7322775498602c8850afcfc1ae38f99df4cbcd51386e873d6b0f8047e55c0c26
 payload.bin = wavpack,wvunpack
+blob_ext = .wv
+raw_ext = .wav

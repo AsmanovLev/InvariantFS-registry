@@ -230,6 +230,16 @@
     "payload.bin": {
       "type": "string",
       "description": "WP619: comma-separated tool names this payload installs into <pack>/bin/ (resolved before PATH by the engine, so bundled-first with externals as fallback)."
+    },
+    "blob_ext": {
+      "type": "string",
+      "pattern": "^\\.[A-Za-z0-9]+$",
+      "description": "WP619: staged-filename suffix for the codec blob side (decode input in<blob_ext>, encode output out<blob_ext>). For extension-sniffing tools (mac wants in.ape, wavpack forces out.wv). Absent = bare in/out."
+    },
+    "raw_ext": {
+      "type": "string",
+      "pattern": "^\\.[A-Za-z0-9]+$",
+      "description": "WP619: staged-filename suffix for the raw side (encode input in<raw_ext>, decode output out<raw_ext>; e.g. wavpack wants in.wav and wvunpack writes out.wav for a bare -o out). Absent = bare in/out."
     }
   }
 }
