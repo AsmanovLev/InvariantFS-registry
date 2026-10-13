@@ -5,8 +5,18 @@
   "description": "WP60 registry manifest. The canonical on-disk form is the key = value text file codecpacks/<name>/<version>/manifest; this JSON schema defines the same fields for validators and tooling. Unknown keys are ignored by the v1 engine, so extends are forward-compatible.",
   "type": "object",
   "required": [
-    "name", "version", "pack_version", "min_read", "algo", "codec_id",
-    "format_id", "family", "category", "priority", "type", "caps"
+    "name",
+    "version",
+    "pack_version",
+    "min_read",
+    "algo",
+    "codec_id",
+    "format_id",
+    "family",
+    "category",
+    "priority",
+    "type",
+    "caps"
   ],
   "additionalProperties": true,
   "properties": {
@@ -47,12 +57,21 @@
     },
     "family": {
       "type": "string",
-      "enum": ["raw_audio", "raw_image", "container", "archive", "code"],
+      "enum": [
+        "raw_audio",
+        "raw_image",
+        "container",
+        "archive",
+        "code"
+      ],
       "description": "Input family. Drives `invfs-pack alternatives <family>`."
     },
     "category": {
       "type": "string",
-      "enum": ["primary", "optional"],
+      "enum": [
+        "primary",
+        "optional"
+      ],
       "description": "Coarse policy weight; `primary` packs are preferred unless superseded via `use`."
     },
     "priority": {
@@ -62,27 +81,45 @@
     },
     "type": {
       "type": "string",
-      "enum": ["codec", "container"],
+      "enum": [
+        "codec",
+        "container"
+      ],
       "description": "ABI shape: codec packs carry encode/decode, container packs carry enumerate/extract/strip/rebuild."
     },
     "caps": {
       "type": "array",
-      "items": { "type": "string", "enum": ["seek", "batched", "wholefile", "container", "external"] },
+      "items": {
+        "type": "string",
+        "enum": [
+          "seek",
+          "batched",
+          "wholefile",
+          "container",
+          "external"
+        ]
+      },
       "description": "Capability bits, | or , separated on disk."
     },
     "provides": {
       "type": "array",
-      "items": { "type": "string" },
+      "items": {
+        "type": "string"
+      },
       "description": "Capabilities/families this pack provides, e.g. ['raw_audio'] or ['container:ext4','container']."
     },
     "replaces": {
       "type": "array",
-      "items": { "type": "string" },
+      "items": {
+        "type": "string"
+      },
       "description": "Pack ids this pack supersedes, e.g. ['builtin:jxl']. Informational for alternatives; never auto-removes."
     },
     "conflicts": {
       "type": "array",
-      "items": { "type": "string" },
+      "items": {
+        "type": "string"
+      },
       "description": "Pack ids this pack conflicts with. Default policy is still 'install but do not touch the existing pack'; the list only drives a warning."
     },
     "dec_mem": {
@@ -100,43 +137,99 @@
       "properties": {
         "magic": {
           "type": "array",
-          "items": { "type": "string", "pattern": "^[0-9A-Fa-f]+$" },
+          "items": {
+            "type": "string",
+            "pattern": "^[0-9A-Fa-f]+$"
+          },
           "description": "Hex byte rules, mutually OR-ed."
         },
         "offset": {
           "type": "array",
-          "items": { "type": "integer", "minimum": 0 },
+          "items": {
+            "type": "integer",
+            "minimum": 0
+          },
           "description": "Byte offset per magic rule (parallel to sniff.magic)."
         },
         "ext": {
           "type": "array",
-          "items": { "type": "string" },
+          "items": {
+            "type": "string"
+          },
           "description": "Advisory filename extensions."
         }
       }
     },
-    "encode": { "type": "string", "description": "Codec pack: encode argv template ({in} {out})." },
-    "decode": { "type": "string", "description": "Codec pack: decode argv template ({in} {out})." },
-    "estimate": { "type": "string", "description": "Admission working-set estimate argv template." },
-    "enumerate": { "type": "string", "description": "Container pack: enumerate members argv template." },
-    "extract": { "type": "string", "description": "Container pack: extract one member argv template." },
-    "strip": { "type": "string", "description": "Container pack: build the recipe argv template." },
-    "rebuild": { "type": "string", "description": "Container pack: rebuild the container argv template." },
-    "map": { "type": "string", "description": "Container pack: emit the FS-owned member map (makes the pack seekable)." },
+    "encode": {
+      "type": "string",
+      "description": "Codec pack: encode argv template ({in} {out})."
+    },
+    "decode": {
+      "type": "string",
+      "description": "Codec pack: decode argv template ({in} {out})."
+    },
+    "estimate": {
+      "type": "string",
+      "description": "Admission working-set estimate argv template."
+    },
+    "enumerate": {
+      "type": "string",
+      "description": "Container pack: enumerate members argv template."
+    },
+    "extract": {
+      "type": "string",
+      "description": "Container pack: extract one member argv template."
+    },
+    "strip": {
+      "type": "string",
+      "description": "Container pack: build the recipe argv template."
+    },
+    "rebuild": {
+      "type": "string",
+      "description": "Container pack: rebuild the container argv template."
+    },
+    "map": {
+      "type": "string",
+      "description": "Container pack: emit the FS-owned member map (makes the pack seekable)."
+    },
     "depends": {
       "type": "array",
-      "items": { "type": "string" },
+      "items": {
+        "type": "string"
+      },
       "description": "External tools required at runtime. invfs-pack checks these and prints the distro install command; it never installs them."
     },
     "recommends": {
       "type": "array",
-      "items": { "type": "string" },
+      "items": {
+        "type": "string"
+      },
       "description": "External tools that improve coverage but are not required."
     },
     "requires": {
       "type": "string",
       "description": "Legacy v1 engine alias for the comma-joined depends list; retained so the current engine still probes tools."
     },
-    "description": { "type": "string", "description": "One-line human summary for `invfs-pack search`." }
+    "description": {
+      "type": "string",
+      "description": "One-line human summary for `invfs-pack search`."
+    },
+    "payload.version": {
+      "type": "string",
+      "description": "WP619: upstream tool version pinned by this fat pack (e.g. \"5.8.1\"). Exact pin; no ranges."
+    },
+    "payload.url": {
+      "type": "string",
+      "description": "WP619: provenance URL of the vendored payload tarball (may differ from where the bits were fetched when the upstream host is unreachable; the sha256 decides)."
+    },
+    "payload.sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$",
+      "description": "WP619: sha256 of the vendored payload/<file>; verified fail-closed by tools/build-payloads.sh before any build."
+    },
+    "payload.bin": {
+      "type": "string",
+      "description": "WP619: comma-separated tool names this payload installs into <pack>/bin/ (resolved before PATH by the engine, so bundled-first with externals as fallback)."
+    }
   }
 }

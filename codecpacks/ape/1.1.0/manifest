@@ -1,0 +1,59 @@
+# ape codecpack — Monkey's Audio (algo 3, INVFS_ALGO_APE).
+#
+# Same raw_audio family as flacr and wavpack; priority 50, so it stays
+# non-primary until `invfs-pack use raw_audio ape`. Installing it
+# alongside flacr MUST NOT touch flacr (conflict default: install but
+# keep the existing pack).
+#
+# WP619: fattened. 1.0.0 was manifest-only (`depends = mac` with no
+# bundled payload: unusable with no OS tool, drifting with the distro's
+# mac). 1.1.0 bundles a statically built `mac` (payload.* pins below).
+# The engine resolves <pack>/bin/mac BEFORE PATH (codec.c
+# manifest_tool_ok + vol_cpack.c pack_argv_build), so the bundled payload
+# is preferred and the external `mac` is fallback-only — used when bin/
+# is absent (e.g. a manager install without built helpers).
+#
+# Sniff claims the APE magic AND RIFF/WAVE: the encode argv (`mac -c4000`)
+# compresses WAV input (the tool's real contract), while an .ape input is
+# still attempted and refused by the tool, landing generic exactly like
+# 1.0.0-with-tools did. No `estimate` key by design: an estimator would
+# need its own bundled helper and break the external fallback; with
+# dec_mem = 0 the pack admits and the encode + decode-back memcmp + size
+# guards arbitrate (vol_sweep.c vol_pack_sweep).
+#
+# Payload provenance: the upstream SDK host was unreachable from the
+# build machine, so the bits came via the Wayback Machine capture and
+# were verified against the sha512 Arch Linux publishes for this exact
+# file in its `mac` PKGBUILD (see tools/build-payloads.sh).
+name = ape
+version = 1.1.0
+pack_version = 1
+min_read = 0.3.0
+algo = 3
+codec_id = INVFS_ALGO_APE
+format_id = ape
+family = raw_audio
+category = optional
+priority = 50
+type = codec
+caps = wholefile|external
+provides = raw_audio
+replaces = builtin:ape
+conflicts =
+dec_mem = 0
+generation = 2
+depends = mac
+requires = mac
+recommends = python3
+sniff.magic = 4D414320
+sniff.magic = 52494646
+sniff.offset = 0
+sniff.magic = 57415645
+sniff.offset = 8
+sniff.ext = ape,wav
+encode = mac {in} {out} -c4000
+decode = mac {in} {out} -d
+payload.version = 12.95
+payload.url = https://monkeysaudio.com/files/MAC_1295_SDK.zip
+payload.sha256 = dfed316cb4aeecfdbc2d28d32a0dbe54785cc737982a97d3fcf85849b343188b
+payload.bin = mac

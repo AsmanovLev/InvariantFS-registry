@@ -1,0 +1,51 @@
+# wavpack codecpack — WavPack (algo 6, INVFS_ALGO_WV).
+#
+# Same raw_audio family as flacr and ape; priority 50, non-primary until
+# `invfs-pack use raw_audio wavpack`. Installing it alongside flacr/ape
+# MUST NOT touch either (conflict default).
+#
+# WP619: fattened. 1.0.0 was manifest-only (`depends = wavpack` with no
+# bundled payload). 1.1.0 bundles statically built `wavpack` + `wvunpack`
+# (payload.* pins below), resolved <pack>/bin first, externals
+# fallback-only — the same bundled-first shape as the ape/flacr fat packs.
+#
+# WP619 argv fix: 1.0.0 `encode = wavpack {in} -o {out}` named a flag the
+# real tool does not accept (wavpack takes a positional output); the fat
+# encode is the tool's own contract `wavpack {in} {out}`. 1.0.0 also
+# omitted `wvunpack` from `depends` although the decode argv needs it;
+# both tools are now in `depends` and in the engine-parsed `requires`.
+# Sniff claims the wvpk magic AND RIFF/WAVE (same rationale as the ape
+# pack), and there is no `estimate` key by the same design (admit with
+# dec_mem = 0, let the guards arbitrate).
+name = wavpack
+version = 1.1.0
+pack_version = 1
+min_read = 0.3.0
+algo = 6
+codec_id = INVFS_ALGO_WV
+format_id = wavpack
+family = raw_audio
+category = optional
+priority = 50
+type = codec
+caps = wholefile|external
+provides = raw_audio
+replaces = builtin:wv
+conflicts =
+dec_mem = 0
+generation = 2
+depends = wavpack,wvunpack
+requires = wavpack,wvunpack
+recommends = python3
+sniff.magic = 7776706B
+sniff.magic = 52494646
+sniff.offset = 0
+sniff.magic = 57415645
+sniff.offset = 8
+sniff.ext = wv,wav
+encode = wavpack {in} {out}
+decode = wvunpack {in} -o {out}
+payload.version = 5.8.1
+payload.url = https://github.com/dbry/WavPack/releases/download/5.8.1/wavpack-5.8.1.tar.xz
+payload.sha256 = 7322775498602c8850afcfc1ae38f99df4cbcd51386e873d6b0f8047e55c0c26
+payload.bin = wavpack,wvunpack
