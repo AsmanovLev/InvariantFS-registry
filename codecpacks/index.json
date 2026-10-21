@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generated": "2026-10-13T16:31:20Z",
+  "generated": "2026-10-21T23:55:33Z",
   "tool": "gen-index.py WP60",
   "packs": [
     {
@@ -207,6 +207,36 @@
       "sniff_ext": [
         "flac",
         "wav"
+      ]
+    },
+    {
+      "name": "iso9660",
+      "version": "1.0.0",
+      "pack_version": 1,
+      "algo": 26,
+      "codec_id": "26",
+      "format_id": "iso9660",
+      "family": "container",
+      "category": "primary",
+      "priority": 100,
+      "type": "container",
+      "caps": [
+        "container",
+        "external"
+      ],
+      "provides": [
+        "container"
+      ],
+      "replaces": [],
+      "conflicts": [],
+      "min_read": "0.3.0",
+      "depends": [],
+      "recommends": [],
+      "manifest": "codecpacks/iso9660/1.0.0/manifest",
+      "sha256": "codecpacks/iso9660/1.0.0/sha256",
+      "sniff_ext": [
+        "iso",
+        "udf"
       ]
     },
     {
@@ -567,6 +597,36 @@
       "sniff_ext": [
         "wv",
         "wav"
+      ]
+    },
+    {
+      "name": "wim",
+      "version": "1.0.0",
+      "pack_version": 1,
+      "algo": 28,
+      "codec_id": "28",
+      "format_id": "wim",
+      "family": "container",
+      "category": "primary",
+      "priority": 100,
+      "type": "container",
+      "caps": [
+        "container",
+        "external"
+      ],
+      "provides": [
+        "container"
+      ],
+      "replaces": [],
+      "conflicts": [],
+      "min_read": "0.3.0",
+      "depends": [],
+      "recommends": [],
+      "manifest": "codecpacks/wim/1.0.0/manifest",
+      "sha256": "codecpacks/wim/1.0.0/sha256",
+      "sniff_ext": [
+        "wim",
+        "esd"
       ]
     },
     {
