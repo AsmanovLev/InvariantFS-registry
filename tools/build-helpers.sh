@@ -23,7 +23,7 @@ if [ -z "$CHOICE" ]; then
     fi
 fi
 
-CFLAGS="${CFLAGS:--std=c11 -O2 -Wall -Wextra}"
+CFLAGS="${CFLAGS:--std=c11 -O2 -Wall -Wextra} -I$ROOT/include"
 
 is_static() { file "$1" 2>/dev/null | grep -q 'statically linked'; }
 

@@ -1,0 +1,11 @@
+# 7z-tools helperpack — standalone static 7zz CLI binary
+name = 7z-tools
+version = 1.0.0
+pack_version = 1
+min_read = 0.3.0
+type = helper
+family = archive
+category = optional
+priority = 100
+provides = archive,7zz
+description = Standalone static 7zz CLI tool for 7-Zip archives

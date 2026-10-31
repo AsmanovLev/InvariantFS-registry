@@ -1,0 +1,11 @@
+# jxl-tools helperpack — standalone static cjxl and djxl CLI binaries
+name = jxl-tools
+version = 1.0.0
+pack_version = 1
+min_read = 0.3.0
+type = helper
+family = raw_image
+category = optional
+priority = 100
+provides = raw_image,cjxl,djxl
+description = Standalone static cjxl and djxl CLI tools for JPEG XL

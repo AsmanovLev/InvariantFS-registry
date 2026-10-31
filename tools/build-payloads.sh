@@ -208,7 +208,9 @@ build_nbli() {
     local src="$t/nbli-payload"
     [ -f "$src/src/NBLI/main.cpp" ] || fail "nbli: no src/NBLI/main.cpp under $t"
     ( cd "$src" && \
-      ln -sf uPNG.h src/imageio/uPNG/upng.h && \
+      if [ ! -e src/imageio/uPNG/upng.h ]; then \
+        ln -sf uPNG.h src/imageio/uPNG/upng.h; \
+      fi && \
       "${CXX:-g++}" -static -O2 -Wall \
         src/NBLI/main.cpp src/imageio/*.c src/imageio/uPNG/*.c src/NBLI/NBLI.cpp \
         -o nbli >/tmp/invfs-wp620-nbli-build.log 2>&1 \

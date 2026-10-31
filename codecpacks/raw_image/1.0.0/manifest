@@ -22,8 +22,8 @@ replaces =
 conflicts =
 dec_mem = 0
 generation = 1
-depends = cjxl,djxl
-requires = cjxl,djxl
+depends = family:raw_image
+requires = family:raw_image
 # DICM at offset 128 (DICOM), P5/P6 (PNM), BM (BMP), II2A/MM2A (TIFF)
 sniff.magic = 4449434D
 sniff.offset = 128

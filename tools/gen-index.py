@@ -22,9 +22,10 @@ from datetime import datetime, timezone
 
 REQUIRED = ["name", "version", "pack_version", "min_read", "algo", "codec_id",
             "format_id", "family", "category", "priority", "type", "caps"]
+REQUIRED_HELPER = ["name", "version", "pack_version", "min_read", "family", "type"]
 FAMILIES = {"raw_audio", "raw_image", "container", "archive", "code"}
 CATEGORIES = {"primary", "optional"}
-TYPES = {"codec", "container"}
+TYPES = {"codec", "container", "helper"}
 CAPS = {"seek", "batched", "wholefile", "container", "external"}
 
 
@@ -158,7 +159,8 @@ def build_entry(root, name, version, platform):
 
 def validate(entry):
     errs = []
-    for key in REQUIRED:
+    req = REQUIRED_HELPER if entry.get("type") == "helper" else REQUIRED
+    for key in req:
         if not entry.get(key) and entry.get(key) != 0:
             errs.append("missing required field '%s'" % key)
     if entry.get("family") and entry["family"] not in FAMILIES:

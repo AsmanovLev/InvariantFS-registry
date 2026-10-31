@@ -1,8 +1,40 @@
 {
   "schema": 1,
-  "generated": "2026-10-21T23:58:01Z",
+  "generated": "2026-10-31T13:34:39Z",
   "tool": "gen-index.py WP60",
   "packs": [
+    {
+      "name": "7z-tools",
+      "version": "1.0.0",
+      "pack_version": 1,
+      "algo": 0,
+      "codec_id": "",
+      "format_id": "",
+      "family": "archive",
+      "category": "optional",
+      "priority": 100,
+      "type": "helper",
+      "caps": [],
+      "provides": [
+        "archive",
+        "7zz"
+      ],
+      "replaces": [],
+      "conflicts": [],
+      "min_read": "0.3.0",
+      "depends": [],
+      "recommends": [],
+      "manifest": "codecpacks/7z-tools/1.0.0/manifest",
+      "sha256": "codecpacks/7z-tools/1.0.0/sha256",
+      "description": "Standalone static 7zz CLI tool for 7-Zip archives",
+      "artifacts": [
+        {
+          "platform": "x86_64-linux-musl",
+          "path": "codecpacks/7z-tools/1.0.0/bin/7zz",
+          "sha256": "8952c73646dc8d4abfb31e48a949ba0ac15cb2437da9e4430886ddb6e12b383b"
+        }
+      ]
+    },
     {
       "name": "ape",
       "version": "1.0.0",
@@ -26,9 +58,7 @@
       ],
       "conflicts": [],
       "min_read": "0.3.0",
-      "depends": [
-        "mac"
-      ],
+      "depends": [],
       "recommends": [
         "python3"
       ],
@@ -36,6 +66,13 @@
       "sha256": "codecpacks/ape/1.0.0/sha256",
       "sniff_ext": [
         "ape"
+      ],
+      "artifacts": [
+        {
+          "platform": "x86_64-linux-musl",
+          "path": "codecpacks/ape/1.0.0/bin/mac",
+          "sha256": "be2e45d45189ba0ac89d282c5d68a2e39a31290eb0229dfd4592c59cd19fff6d"
+        }
       ]
     },
     {
@@ -61,9 +98,7 @@
       ],
       "conflicts": [],
       "min_read": "0.3.0",
-      "depends": [
-        "mac"
-      ],
+      "depends": [],
       "recommends": [
         "python3"
       ],
@@ -72,6 +107,13 @@
       "sniff_ext": [
         "ape",
         "wav"
+      ],
+      "artifacts": [
+        {
+          "platform": "x86_64-linux-musl",
+          "path": "codecpacks/ape/1.1.0/bin/mac",
+          "sha256": "be2e45d45189ba0ac89d282c5d68a2e39a31290eb0229dfd4592c59cd19fff6d"
+        }
       ]
     },
     {
@@ -103,6 +145,13 @@
       "sniff_ext": [
         "ext4",
         "ext4img"
+      ],
+      "artifacts": [
+        {
+          "platform": "x86_64-linux-musl",
+          "path": "codecpacks/ext4fs/1.0.0/bin/ext4fs",
+          "sha256": "114a0ca0d3928da24cd7097f973a696ce8ed0cac7111141c906c23637fe7e20f"
+        }
       ]
     },
     {
@@ -136,6 +185,13 @@
         "fat",
         "vfat",
         "exfat"
+      ],
+      "artifacts": [
+        {
+          "platform": "x86_64-linux-musl",
+          "path": "codecpacks/fatfs/1.0.0/bin/fatfs",
+          "sha256": "33fb460764f7673be454265510c5bf15ea905ff036ae8cd10f91f077b4a905d7"
+        }
       ]
     },
     {
@@ -161,9 +217,7 @@
       ],
       "conflicts": [],
       "min_read": "0.3.0",
-      "depends": [
-        "flac"
-      ],
+      "depends": [],
       "recommends": [
         "python3"
       ],
@@ -171,6 +225,13 @@
       "sha256": "codecpacks/flacr/1.0.0/sha256",
       "sniff_ext": [
         "flac"
+      ],
+      "artifacts": [
+        {
+          "platform": "x86_64-linux-musl",
+          "path": "codecpacks/flacr/1.0.0/bin/flac",
+          "sha256": "9d0a78977dd82de9de7533814644a74e33e1b42ae17c31db4367687c72a38fa0"
+        }
       ]
     },
     {
@@ -196,9 +257,7 @@
       ],
       "conflicts": [],
       "min_read": "0.3.0",
-      "depends": [
-        "flac"
-      ],
+      "depends": [],
       "recommends": [
         "python3"
       ],
@@ -207,6 +266,13 @@
       "sniff_ext": [
         "flac",
         "wav"
+      ],
+      "artifacts": [
+        {
+          "platform": "x86_64-linux-musl",
+          "path": "codecpacks/flacr/1.1.0/bin/flac",
+          "sha256": "9d0a78977dd82de9de7533814644a74e33e1b42ae17c31db4367687c72a38fa0"
+        }
       ]
     },
     {
@@ -237,6 +303,13 @@
       "sniff_ext": [
         "iso",
         "udf"
+      ],
+      "artifacts": [
+        {
+          "platform": "x86_64-linux-musl",
+          "path": "codecpacks/iso9660/1.0.0/bin/iso9660",
+          "sha256": "caf65da352139eca7554e71b91da3513c8d3497b8b0a95127be220d22f997a52"
+        }
       ]
     },
     {
@@ -262,13 +335,65 @@
       ],
       "conflicts": [],
       "min_read": "0.3.0",
-      "depends": [
+      "depends": [],
+      "recommends": [],
+      "manifest": "codecpacks/jxl/1.0.0/manifest",
+      "sha256": "codecpacks/jxl/1.0.0/sha256",
+      "artifacts": [
+        {
+          "platform": "x86_64-linux-musl",
+          "path": "codecpacks/jxl/1.0.0/bin/cjxl",
+          "sha256": "c43d5bfbf1b359947a6edb61edb0bfc079924ee9801b30895533ff1fce83ee28"
+        },
+        {
+          "platform": "x86_64-linux-musl",
+          "path": "codecpacks/jxl/1.0.0/bin/djxl",
+          "sha256": "67bdc98fdca7f93d7b77f3473e818b251ba107109ee83b3b37ccbd90066f2454"
+        },
+        {
+          "platform": "x86_64-linux-musl",
+          "path": "codecpacks/jxl/1.0.0/bin/jxlest",
+          "sha256": "6276b843d17f7f9b32300396889e47d7386926c85f020fd788be4a194a104e5e"
+        }
+      ]
+    },
+    {
+      "name": "jxl-tools",
+      "version": "1.0.0",
+      "pack_version": 1,
+      "algo": 0,
+      "codec_id": "",
+      "format_id": "",
+      "family": "raw_image",
+      "category": "optional",
+      "priority": 100,
+      "type": "helper",
+      "caps": [],
+      "provides": [
+        "raw_image",
         "cjxl",
         "djxl"
       ],
+      "replaces": [],
+      "conflicts": [],
+      "min_read": "0.3.0",
+      "depends": [],
       "recommends": [],
-      "manifest": "codecpacks/jxl/1.0.0/manifest",
-      "sha256": "codecpacks/jxl/1.0.0/sha256"
+      "manifest": "codecpacks/jxl-tools/1.0.0/manifest",
+      "sha256": "codecpacks/jxl-tools/1.0.0/sha256",
+      "description": "Standalone static cjxl and djxl CLI tools for JPEG XL",
+      "artifacts": [
+        {
+          "platform": "x86_64-linux-musl",
+          "path": "codecpacks/jxl-tools/1.0.0/bin/cjxl",
+          "sha256": "c43d5bfbf1b359947a6edb61edb0bfc079924ee9801b30895533ff1fce83ee28"
+        },
+        {
+          "platform": "x86_64-linux-musl",
+          "path": "codecpacks/jxl-tools/1.0.0/bin/djxl",
+          "sha256": "67bdc98fdca7f93d7b77f3473e818b251ba107109ee83b3b37ccbd90066f2454"
+        }
+      ]
     },
     {
       "name": "nbli",
@@ -291,9 +416,7 @@
       "replaces": [],
       "conflicts": [],
       "min_read": "0.3.0",
-      "depends": [
-        "nbli"
-      ],
+      "depends": [],
       "recommends": [],
       "manifest": "codecpacks/nbli/1.0.0/manifest",
       "sha256": "codecpacks/nbli/1.0.0/sha256",
@@ -301,7 +424,7 @@
         {
           "platform": "x86_64-linux-musl",
           "path": "codecpacks/nbli/1.0.0/bin/nbli",
-          "sha256": "6501fed6fa463313a0b05cbaf7d6fb7be922ceeb61b146ba38a668270e2ab8bf"
+          "sha256": "0226134680144536c5fbecd74a3caf69dbe5234800bb7a615ebcffd1e949727e"
         }
       ]
     },
@@ -333,6 +456,13 @@
       "sha256": "codecpacks/ntfs/1.0.0/sha256",
       "sniff_ext": [
         "ntfs"
+      ],
+      "artifacts": [
+        {
+          "platform": "x86_64-linux-musl",
+          "path": "codecpacks/ntfs/1.0.0/bin/ntfs",
+          "sha256": "dd5ab879c2243e3f41e260b4961133b7d91a0149d4048e5f489af7e8e7a17b30"
+        }
       ]
     },
     {
@@ -357,14 +487,24 @@
       "replaces": [],
       "conflicts": [],
       "min_read": "0.3.0",
-      "depends": [
-        "7zz"
-      ],
+      "depends": [],
       "recommends": [],
       "manifest": "codecpacks/p7z/1.0.0/manifest",
       "sha256": "codecpacks/p7z/1.0.0/sha256",
       "sniff_ext": [
         "7z"
+      ],
+      "artifacts": [
+        {
+          "platform": "x86_64-linux-musl",
+          "path": "codecpacks/p7z/1.0.0/bin/7zz",
+          "sha256": "8952c73646dc8d4abfb31e48a949ba0ac15cb2437da9e4430886ddb6e12b383b"
+        },
+        {
+          "platform": "x86_64-linux-musl",
+          "path": "codecpacks/p7z/1.0.0/bin/p7z",
+          "sha256": "42ab8dc9bce34234e08eebeeb252b49bdb95113a96e1aaa1d0a127b27d887f01"
+        }
       ]
     },
     {
@@ -395,6 +535,13 @@
       "sha256": "codecpacks/qcow2/1.0.0/sha256",
       "sniff_ext": [
         "qcow2"
+      ],
+      "artifacts": [
+        {
+          "platform": "x86_64-linux-musl",
+          "path": "codecpacks/qcow2/1.0.0/bin/qcow2",
+          "sha256": "608dde79b6894dc7d650cd834cf4b9240d96d4d2ede64b675d59d6b1e3a39be3"
+        }
       ]
     },
     {
@@ -419,8 +566,7 @@
       "conflicts": [],
       "min_read": "0.3.0",
       "depends": [
-        "cjxl",
-        "djxl"
+        "family:raw_image"
       ],
       "recommends": [],
       "manifest": "codecpacks/raw_image/1.0.0/manifest",
@@ -463,6 +609,13 @@
       "sniff_ext": [
         "img",
         "raw"
+      ],
+      "artifacts": [
+        {
+          "platform": "x86_64-linux-musl",
+          "path": "codecpacks/rawdisk/1.0.0/bin/rawdisk",
+          "sha256": "67c5b4d3586f0c813c98cc92fa5df62afbfa2d4a69f7d3d755df093a534ad458"
+        }
       ]
     },
     {
@@ -525,6 +678,13 @@
       "sha256": "codecpacks/vdi/1.0.0/sha256",
       "sniff_ext": [
         "vdi"
+      ],
+      "artifacts": [
+        {
+          "platform": "x86_64-linux-musl",
+          "path": "codecpacks/vdi/1.0.0/bin/vdi",
+          "sha256": "48b2726164ad1464d2b8b49a52c794a4690bae774a8044553c8b1142bc844669"
+        }
       ]
     },
     {
@@ -550,9 +710,7 @@
       ],
       "conflicts": [],
       "min_read": "0.3.0",
-      "depends": [
-        "wavpack"
-      ],
+      "depends": [],
       "recommends": [
         "python3"
       ],
@@ -560,6 +718,18 @@
       "sha256": "codecpacks/wavpack/1.0.0/sha256",
       "sniff_ext": [
         "wv"
+      ],
+      "artifacts": [
+        {
+          "platform": "x86_64-linux-musl",
+          "path": "codecpacks/wavpack/1.0.0/bin/wavpack",
+          "sha256": "1a6fc42cbbb293fed491334f8fc64a161d70db5694495ab42787fb8da1a69c97"
+        },
+        {
+          "platform": "x86_64-linux-musl",
+          "path": "codecpacks/wavpack/1.0.0/bin/wvunpack",
+          "sha256": "407a7e49f69bef756bae6c612a00b35557757115a5a87090f0d403c2908cf66d"
+        }
       ]
     },
     {
@@ -585,10 +755,7 @@
       ],
       "conflicts": [],
       "min_read": "0.3.0",
-      "depends": [
-        "wavpack",
-        "wvunpack"
-      ],
+      "depends": [],
       "recommends": [
         "python3"
       ],
@@ -597,6 +764,18 @@
       "sniff_ext": [
         "wv",
         "wav"
+      ],
+      "artifacts": [
+        {
+          "platform": "x86_64-linux-musl",
+          "path": "codecpacks/wavpack/1.1.0/bin/wavpack",
+          "sha256": "1a6fc42cbbb293fed491334f8fc64a161d70db5694495ab42787fb8da1a69c97"
+        },
+        {
+          "platform": "x86_64-linux-musl",
+          "path": "codecpacks/wavpack/1.1.0/bin/wvunpack",
+          "sha256": "407a7e49f69bef756bae6c612a00b35557757115a5a87090f0d403c2908cf66d"
+        }
       ]
     },
     {
@@ -627,6 +806,13 @@
       "sniff_ext": [
         "wim",
         "esd"
+      ],
+      "artifacts": [
+        {
+          "platform": "x86_64-linux-musl",
+          "path": "codecpacks/wim/1.0.0/bin/wim",
+          "sha256": "853547519e9b37b93c6a6630a083a5d5686fef6d52a7b35239c14e91f63f92bf"
+        }
       ]
     },
     {
@@ -658,6 +844,13 @@
       "sniff_ext": [
         "xfs",
         "xfsimg"
+      ],
+      "artifacts": [
+        {
+          "platform": "x86_64-linux-musl",
+          "path": "codecpacks/xfs/1.0.0/bin/xfs",
+          "sha256": "4ba7225921736f996f99a2e4a727c72376849882f09a9e0e0a28c8ec910db709"
+        }
       ]
     }
   ]

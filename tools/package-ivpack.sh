@@ -44,7 +44,7 @@ OUTDIR="$ROOT/dist/ivpack"
 mkdir -p "$OUTDIR"
 
 CC="${CC:-cc}"
-CFLAGS="${CFLAGS:--std=c11 -O2 -Wall -Wextra}"
+CFLAGS="${CFLAGS:--std=c11 -O2 -Wall -Wextra} -I$ROOT/include"
 
 count=0; with_so=0; no_so_py=0; no_so_nosrc=0
 for dir in codecpacks/*/*; do

@@ -30,13 +30,13 @@ replaces = builtin:jxl
 conflicts =
 dec_mem = 0
 generation = 1
-depends = cjxl,djxl
-requires = cjxl,djxl
+depends =
+requires =
 # JPEG SOI is the input claim. The JXL box + raw codestream magics ride
 # along for the registry-sniff users (the WP10 UNCOMPRESSIBLE retry gate).
 sniff.magic = FFD8FF
 sniff.magic = FF0A
 sniff.magic = 0000000C4A584C20
-encode = cjxl {in} {out} --lossless_jpeg=1
-decode = djxl {in} {out} --output_format=jpeg
-estimate = jxlest estimate {in}
+encode = bin/cjxl {in} {out} --lossless_jpeg=1
+decode = bin/djxl {in} {out} --output_format=jpeg
+estimate = bin/jxlest estimate {in}

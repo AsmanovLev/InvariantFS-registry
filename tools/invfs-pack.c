@@ -952,6 +952,8 @@ static void dep_hint(const char *tool, const char *distro)
     printf("    install package providing: %s\n", tool);
 }
 
+static int install_from_repo(repo *r, pkg *p, int force);
+
 static void check_deps(const pkg *p, int hard)
 {
     char distro_buf[64];
@@ -968,7 +970,73 @@ static void check_deps(const pkg *p, int hard)
         while (*tok == ' ' || *tok == '\t') tok++;
         e = tok + strlen(tok);
         while (e > tok && (e[-1] == ' ' || e[-1] == '\t')) *--e = '\0';
-        if (!*tok || on_path(tok)) continue;
+        if (!*tok) continue;
+
+        /* 1. family:<name> dependency (OR-choice satisfied by any pack in that family) */
+        if (!strncmp(tok, "family:", 7)) {
+            const char *fam = tok + 7;
+            int satisfied = 0;
+            for (size_t i = 0; i < npkgs; i++) {
+                if (pkgs[i].installed && (!strcmp(pkgs[i].family, fam) || list_has(pkgs[i].provides, fam))) {
+                    satisfied = 1;
+                    break;
+                }
+            }
+            if (satisfied) continue;
+            if (hard) {
+                char prim[128];
+                const char *cand_name = NULL;
+                if (alt_get(fam, prim, sizeof prim) && prim[0]) cand_name = prim;
+                pkg *cand = NULL;
+                if (cand_name) cand = find_avail(cand_name, NULL);
+                if (!cand) {
+                    long best_prio = -1;
+                    for (size_t i = 0; i < npkgs; i++) {
+                        if (!strcmp(pkgs[i].family, fam) || list_has(pkgs[i].provides, fam)) {
+                            if (pkgs[i].priority > best_prio) {
+                                best_prio = pkgs[i].priority;
+                                cand = &pkgs[i];
+                            }
+                        }
+                    }
+                }
+                if (cand) {
+                    printf("  -> auto-installing family provider '%s' (%s) for '%s'...\n",
+                           cand->name, cand->version, tok);
+                    install_from_repo(&g_repo, cand, 0);
+                    continue;
+                }
+                printf("  ! missing required family provider for '%s'\n", tok);
+            } else {
+                printf("  - missing recommended family provider for '%s' (optional)\n", tok);
+            }
+            continue;
+        }
+
+        /* 2. pack dependency: helper:<name>, codec:<name>, container:<name>, or pack name */
+        const char *pname = tok;
+        if (!strncmp(tok, "helper:", 7)) pname = tok + 7;
+        else if (!strncmp(tok, "codec:", 6)) pname = tok + 6;
+        else if (!strncmp(tok, "container:", 10)) pname = tok + 10;
+        pkg *dep = find_any(pname, NULL);
+        if (dep) {
+            if (dep->installed) continue;
+            if (hard) {
+                pkg *cand = find_avail(pname, NULL);
+                if (cand) {
+                    printf("  -> auto-installing dependency pack '%s' (%s)...\n", cand->name, cand->version);
+                    install_from_repo(&g_repo, cand, 0);
+                    continue;
+                }
+                printf("  ! missing required dependency pack '%s'\n", pname);
+            } else {
+                printf("  - missing recommended dependency pack '%s' (optional)\n", pname);
+            }
+            continue;
+        }
+
+        /* 3. System host tool fallback */
+        if (on_path(tok)) continue;
         if (hard) {
             printf("  ! missing required external tool '%s' — pack installs but coverage is degraded.\n", tok);
             dep_hint(tok, distro);
@@ -1181,11 +1249,12 @@ static int cmd_list(int argc, char **argv)
 {
     const char *family = argc ? argv[0] : NULL;
     printf("Codecpacks (root %s, repo %s)\n", pack_root, g_repo.base);
-    printf("  %-12s %-8s %-10s %-5s %s\n", "NAME", "VERSION", "FAMILY", "INST", "FORMAT");
+    printf("  %-12s %-8s %-10s %-9s %-5s %s\n", "NAME", "VERSION", "FAMILY", "TYPE", "INST", "FORMAT");
     for (size_t i = 0; i < npkgs; i++) {
         if (family && *family && strcmp(pkgs[i].family, family)) continue;
-        printf("  %-12s %-8s %-10s %-5s %s\n", pkgs[i].name, pkgs[i].version,
-               pkgs[i].family, pkgs[i].installed ? "yes" : "no", pkgs[i].format_id);
+        printf("  %-12s %-8s %-10s %-9s %-5s %s\n", pkgs[i].name, pkgs[i].version,
+               pkgs[i].family, pkgs[i].type[0] ? pkgs[i].type : "codec",
+               pkgs[i].installed ? "yes" : "no", pkgs[i].format_id);
     }
     return 0;
 }

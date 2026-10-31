@@ -9,14 +9,8 @@
     "version",
     "pack_version",
     "min_read",
-    "algo",
-    "codec_id",
-    "format_id",
     "family",
-    "category",
-    "priority",
-    "type",
-    "caps"
+    "type"
   ],
   "additionalProperties": true,
   "properties": {
@@ -83,9 +77,10 @@
       "type": "string",
       "enum": [
         "codec",
-        "container"
+        "container",
+        "helper"
       ],
-      "description": "ABI shape: codec packs carry encode/decode, container packs carry enumerate/extract/strip/rebuild."
+      "description": "ABI shape: codec packs carry encode/decode, container packs carry enumerate/extract/strip/rebuild, helper packs deliver CLI tools/binaries."
     },
     "caps": {
       "type": "array",
