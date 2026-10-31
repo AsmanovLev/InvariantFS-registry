@@ -105,7 +105,7 @@ def num(m, key, default=0):
         return default
 
 
-def build_entry(root, name, version, platform):
+def build_entry(root, name, version, platform, release_tag="v1.2.0"):
     rel = os.path.join("codecpacks", name, version)
     packdir = os.path.join(root, rel)
     manifest_path = os.path.join(packdir, "manifest")
@@ -139,6 +139,17 @@ def build_entry(root, name, version, platform):
         entry["description"] = m["description"]
     if m.get("sniff.ext"):
         entry["sniff_ext"] = m["sniff.ext"]
+
+    # Check for compiled ivpack bundle
+    ivpack_fn = "%s-%s.ivpack" % (name, version)
+    ivpack_path = os.path.join(root, "dist", "ivpack", ivpack_fn)
+    if os.path.isfile(ivpack_path):
+        entry["bundle"] = {
+            "file": ivpack_fn,
+            "size": os.path.getsize(ivpack_path),
+            "sha256": sha256_file(ivpack_path),
+            "download_url": "https://github.com/AsmanovLev/InvariantFS-registry/releases/download/%s/%s" % (release_tag, ivpack_fn)
+        }
 
     artifacts = []
     bindir = os.path.join(packdir, "bin")
@@ -182,6 +193,8 @@ def main():
     ap.add_argument("--root", default=".")
     ap.add_argument("--platform", default=None,
                     help="add built bin/ artifacts under this platform tag")
+    ap.add_argument("--release-tag", default="v1.2.0",
+                    help="GitHub release tag for .ivpack assets")
     ap.add_argument("--check", action="store_true")
     args = ap.parse_args()
     root = os.path.abspath(args.root)
@@ -198,7 +211,7 @@ def main():
         for version in sorted(os.listdir(ndir)):
             if not os.path.isdir(os.path.join(ndir, version)):
                 continue
-            entry = build_entry(root, name, version, args.platform)
+            entry = build_entry(root, name, version, args.platform, args.release_tag)
             if not entry:
                 continue
             if args.check:
@@ -212,6 +225,11 @@ def main():
         "schema": 1,
         "generated": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "tool": "gen-index.py WP60",
+        "release": {
+            "tag": args.release_tag,
+            "url": "https://github.com/AsmanovLev/InvariantFS-registry/releases/tag/%s" % args.release_tag,
+            "download_base": "https://github.com/AsmanovLev/InvariantFS-registry/releases/download/%s" % args.release_tag,
+        },
         "packs": entries,
     }
     out = os.path.join(packs_dir, "index.json")

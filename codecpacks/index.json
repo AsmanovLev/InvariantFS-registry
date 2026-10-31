@@ -1,7 +1,12 @@
 {
   "schema": 1,
-  "generated": "2026-10-31T13:34:39Z",
+  "generated": "2026-10-31T14:34:49Z",
   "tool": "gen-index.py WP60",
+  "release": {
+    "tag": "v1.2.0",
+    "url": "https://github.com/AsmanovLev/InvariantFS-registry/releases/tag/v1.2.0",
+    "download_base": "https://github.com/AsmanovLev/InvariantFS-registry/releases/download/v1.2.0"
+  },
   "packs": [
     {
       "name": "7z-tools",
@@ -27,6 +32,12 @@
       "manifest": "codecpacks/7z-tools/1.0.0/manifest",
       "sha256": "codecpacks/7z-tools/1.0.0/sha256",
       "description": "Standalone static 7zz CLI tool for 7-Zip archives",
+      "bundle": {
+        "file": "7z-tools-1.0.0.ivpack",
+        "size": 3772315,
+        "sha256": "40bb84348edb2ec7831570f6e70a507a0aec74872ef3e554eac7a39e69c25a51",
+        "download_url": "https://github.com/AsmanovLev/InvariantFS-registry/releases/download/v1.2.0/7z-tools-1.0.0.ivpack"
+      },
       "artifacts": [
         {
           "platform": "x86_64-linux-musl",
@@ -67,6 +78,12 @@
       "sniff_ext": [
         "ape"
       ],
+      "bundle": {
+        "file": "ape-1.0.0.ivpack",
+        "size": 3771672,
+        "sha256": "fbd43861909e0a7962fae4b26b9b8e835b8c0a7afee05ea1fc622a5b0d15ddc3",
+        "download_url": "https://github.com/AsmanovLev/InvariantFS-registry/releases/download/v1.2.0/ape-1.0.0.ivpack"
+      },
       "artifacts": [
         {
           "platform": "x86_64-linux-musl",
@@ -108,6 +125,12 @@
         "ape",
         "wav"
       ],
+      "bundle": {
+        "file": "ape-1.1.0.ivpack",
+        "size": 3773200,
+        "sha256": "bb5ae911841b34c0c5d25868c2e4f413d9fa7dc7f08dffeb9fcb86433f4ad312",
+        "download_url": "https://github.com/AsmanovLev/InvariantFS-registry/releases/download/v1.2.0/ape-1.1.0.ivpack"
+      },
       "artifacts": [
         {
           "platform": "x86_64-linux-musl",
@@ -146,6 +169,12 @@
         "ext4",
         "ext4img"
       ],
+      "bundle": {
+        "file": "ext4fs-1.0.0.ivpack",
+        "size": 812400,
+        "sha256": "8a6c1b190d1f2874b568a9f1559039d96b00cbbd53039a9be668cf35337fc0d8",
+        "download_url": "https://github.com/AsmanovLev/InvariantFS-registry/releases/download/v1.2.0/ext4fs-1.0.0.ivpack"
+      },
       "artifacts": [
         {
           "platform": "x86_64-linux-musl",
@@ -186,6 +215,12 @@
         "vfat",
         "exfat"
       ],
+      "bundle": {
+        "file": "fatfs-1.0.0.ivpack",
+        "size": 808833,
+        "sha256": "2446f69133ff51afdae33bf10b2f6b4be90b5dddd6821690b43c836d5e5a995e",
+        "download_url": "https://github.com/AsmanovLev/InvariantFS-registry/releases/download/v1.2.0/fatfs-1.0.0.ivpack"
+      },
       "artifacts": [
         {
           "platform": "x86_64-linux-musl",
@@ -226,6 +261,12 @@
       "sniff_ext": [
         "flac"
       ],
+      "bundle": {
+        "file": "flacr-1.0.0.ivpack",
+        "size": 1625367,
+        "sha256": "a54007e4280a7e7eac193ee220dc9569bdef0c47c15ce9ba84a4a4ce59547ce3",
+        "download_url": "https://github.com/AsmanovLev/InvariantFS-registry/releases/download/v1.2.0/flacr-1.0.0.ivpack"
+      },
       "artifacts": [
         {
           "platform": "x86_64-linux-musl",
@@ -267,6 +308,12 @@
         "flac",
         "wav"
       ],
+      "bundle": {
+        "file": "flacr-1.1.0.ivpack",
+        "size": 1626218,
+        "sha256": "61a2a598aad36c4e24343c29bc98912abd6a5b70644ca8ee61e29ad61f1d5005",
+        "download_url": "https://github.com/AsmanovLev/InvariantFS-registry/releases/download/v1.2.0/flacr-1.1.0.ivpack"
+      },
       "artifacts": [
         {
           "platform": "x86_64-linux-musl",
@@ -304,6 +351,12 @@
         "iso",
         "udf"
       ],
+      "bundle": {
+        "file": "iso9660-1.0.0.ivpack",
+        "size": 828417,
+        "sha256": "81d8b2ef986cf67eede1dc28c644d99d1556717286ef58533fe03934fda669a5",
+        "download_url": "https://github.com/AsmanovLev/InvariantFS-registry/releases/download/v1.2.0/iso9660-1.0.0.ivpack"
+      },
       "artifacts": [
         {
           "platform": "x86_64-linux-musl",
@@ -339,6 +392,12 @@
       "recommends": [],
       "manifest": "codecpacks/jxl/1.0.0/manifest",
       "sha256": "codecpacks/jxl/1.0.0/sha256",
+      "bundle": {
+        "file": "jxl-1.0.0.ivpack",
+        "size": 13448317,
+        "sha256": "c8cc96dd2ff6bf746f96ebc2e6ccba14af98c2d2fb699022e97fbc0bced4b0fd",
+        "download_url": "https://github.com/AsmanovLev/InvariantFS-registry/releases/download/v1.2.0/jxl-1.0.0.ivpack"
+      },
       "artifacts": [
         {
           "platform": "x86_64-linux-musl",
@@ -382,6 +441,12 @@
       "manifest": "codecpacks/jxl-tools/1.0.0/manifest",
       "sha256": "codecpacks/jxl-tools/1.0.0/sha256",
       "description": "Standalone static cjxl and djxl CLI tools for JPEG XL",
+      "bundle": {
+        "file": "jxl-tools-1.0.0.ivpack",
+        "size": 12671033,
+        "sha256": "2f3f6798b4344043e71e7a37337fd514c77438a3ff33d7a3a0ebda58f266ff0f",
+        "download_url": "https://github.com/AsmanovLev/InvariantFS-registry/releases/download/v1.2.0/jxl-tools-1.0.0.ivpack"
+      },
       "artifacts": [
         {
           "platform": "x86_64-linux-musl",
@@ -420,6 +485,12 @@
       "recommends": [],
       "manifest": "codecpacks/nbli/1.0.0/manifest",
       "sha256": "codecpacks/nbli/1.0.0/sha256",
+      "bundle": {
+        "file": "nbli-1.0.0.ivpack",
+        "size": 997188,
+        "sha256": "c6dedd9882111895d64abc78d0052233a8690fd06a033181c23fd165d2b6e9b6",
+        "download_url": "https://github.com/AsmanovLev/InvariantFS-registry/releases/download/v1.2.0/nbli-1.0.0.ivpack"
+      },
       "artifacts": [
         {
           "platform": "x86_64-linux-musl",
@@ -457,6 +528,12 @@
       "sniff_ext": [
         "ntfs"
       ],
+      "bundle": {
+        "file": "ntfs-1.0.0.ivpack",
+        "size": 808707,
+        "sha256": "1253687a063ea11fcc9e8b1653b20cdd0c73ce8c987b85e674caea36d771b329",
+        "download_url": "https://github.com/AsmanovLev/InvariantFS-registry/releases/download/v1.2.0/ntfs-1.0.0.ivpack"
+      },
       "artifacts": [
         {
           "platform": "x86_64-linux-musl",
@@ -494,6 +571,12 @@
       "sniff_ext": [
         "7z"
       ],
+      "bundle": {
+        "file": "p7z-1.0.0.ivpack",
+        "size": 4606797,
+        "sha256": "eed43fd7db9eace9e6e52021aaf61eb9e8ba20229c5daf1a807e58ba36edb34d",
+        "download_url": "https://github.com/AsmanovLev/InvariantFS-registry/releases/download/v1.2.0/p7z-1.0.0.ivpack"
+      },
       "artifacts": [
         {
           "platform": "x86_64-linux-musl",
@@ -536,6 +619,12 @@
       "sniff_ext": [
         "qcow2"
       ],
+      "bundle": {
+        "file": "qcow2-1.0.0.ivpack",
+        "size": 786859,
+        "sha256": "d3a6002a16f5c3a928406b7ea5cc759c4e1814ec5eabe6dc2527597ce3da795f",
+        "download_url": "https://github.com/AsmanovLev/InvariantFS-registry/releases/download/v1.2.0/qcow2-1.0.0.ivpack"
+      },
       "artifacts": [
         {
           "platform": "x86_64-linux-musl",
@@ -578,7 +667,13 @@
         "bmp",
         "tif",
         "tiff"
-      ]
+      ],
+      "bundle": {
+        "file": "raw_image-1.0.0.ivpack",
+        "size": 26950,
+        "sha256": "9872633424fb9d7a7bb7635b160ed5a5e5fc9d51fdbbbaa19517152a51591cc9",
+        "download_url": "https://github.com/AsmanovLev/InvariantFS-registry/releases/download/v1.2.0/raw_image-1.0.0.ivpack"
+      }
     },
     {
       "name": "rawdisk",
@@ -610,6 +705,12 @@
         "img",
         "raw"
       ],
+      "bundle": {
+        "file": "rawdisk-1.0.0.ivpack",
+        "size": 792400,
+        "sha256": "a4196b4bb69ad1f8b8fc265581eba7a0b20740c7348e6ed0f181117f6c1d0a05",
+        "download_url": "https://github.com/AsmanovLev/InvariantFS-registry/releases/download/v1.2.0/rawdisk-1.0.0.ivpack"
+      },
       "artifacts": [
         {
           "platform": "x86_64-linux-musl",
@@ -648,7 +749,13 @@
       "sha256": "codecpacks/splt_test/1.0.0/sha256",
       "sniff_ext": [
         "splt"
-      ]
+      ],
+      "bundle": {
+        "file": "splt_test-1.0.0.ivpack",
+        "size": 8051,
+        "sha256": "40fae056171667feff32f9196b3a5f3ecbd5a785754aeb984ad7d2e12ca8bb39",
+        "download_url": "https://github.com/AsmanovLev/InvariantFS-registry/releases/download/v1.2.0/splt_test-1.0.0.ivpack"
+      }
     },
     {
       "name": "vdi",
@@ -679,6 +786,12 @@
       "sniff_ext": [
         "vdi"
       ],
+      "bundle": {
+        "file": "vdi-1.0.0.ivpack",
+        "size": 782423,
+        "sha256": "be876dc5abaaf8e2f2dd5601ae04c0e2677f04afe8cdc95078288d829f550d38",
+        "download_url": "https://github.com/AsmanovLev/InvariantFS-registry/releases/download/v1.2.0/vdi-1.0.0.ivpack"
+      },
       "artifacts": [
         {
           "platform": "x86_64-linux-musl",
@@ -719,6 +832,12 @@
       "sniff_ext": [
         "wv"
       ],
+      "bundle": {
+        "file": "wavpack-1.0.0.ivpack",
+        "size": 2711795,
+        "sha256": "06c8b2a05e5314f2c957f5e490c3a3e2ecab7baafccfef57083c6487116a1867",
+        "download_url": "https://github.com/AsmanovLev/InvariantFS-registry/releases/download/v1.2.0/wavpack-1.0.0.ivpack"
+      },
       "artifacts": [
         {
           "platform": "x86_64-linux-musl",
@@ -765,6 +884,12 @@
         "wv",
         "wav"
       ],
+      "bundle": {
+        "file": "wavpack-1.1.0.ivpack",
+        "size": 2713185,
+        "sha256": "24951a36f3f6cfec42eff0edc88160121e6cdaaa1e6ab5819503537a05924d1a",
+        "download_url": "https://github.com/AsmanovLev/InvariantFS-registry/releases/download/v1.2.0/wavpack-1.1.0.ivpack"
+      },
       "artifacts": [
         {
           "platform": "x86_64-linux-musl",
@@ -807,6 +932,12 @@
         "wim",
         "esd"
       ],
+      "bundle": {
+        "file": "wim-1.0.0.ivpack",
+        "size": 824773,
+        "sha256": "de39c8dc76b144db23e4e7ef4d2b7cd6d761a0f4be77e6fcdf7675fdae306b1b",
+        "download_url": "https://github.com/AsmanovLev/InvariantFS-registry/releases/download/v1.2.0/wim-1.0.0.ivpack"
+      },
       "artifacts": [
         {
           "platform": "x86_64-linux-musl",
@@ -845,6 +976,12 @@
         "xfs",
         "xfsimg"
       ],
+      "bundle": {
+        "file": "xfs-1.0.0.ivpack",
+        "size": 813052,
+        "sha256": "7cdbae838bd4cb32db3208d29b7e17747fd3c6ae5cb23b90d083e6c7f07f7be0",
+        "download_url": "https://github.com/AsmanovLev/InvariantFS-registry/releases/download/v1.2.0/xfs-1.0.0.ivpack"
+      },
       "artifacts": [
         {
           "platform": "x86_64-linux-musl",
