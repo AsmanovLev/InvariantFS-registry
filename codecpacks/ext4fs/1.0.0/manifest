@@ -34,4 +34,10 @@ extract = bin/ext4fs extract {in} {idx} {out}
 strip = bin/ext4fs strip {in} {out}
 rebuild = bin/ext4fs rebuild {recipe} {dir} {out}
 map = bin/ext4fs map {in} {out}
+# ABI v1, additive: what every non-member byte range IS (GCFG table).
+# meta_structure vs garbage, and whether the pack READ the garbage and found it
+# all zero (so it can be reproduced without being stored). The core must probe
+# for this command and fall back to "no classification" when a pack lacks it --
+# packs in the wild predate it.
+classify = bin/ext4fs classify {in} {out}
 estimate = bin/ext4fs estimate {in}

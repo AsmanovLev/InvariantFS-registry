@@ -1450,6 +1450,184 @@ static int cmd_estimate(const char *in)
     return 0;
 }
 
+
+
+/* ---- classify: what every non-member byte range IS ----------------------
+ *
+ * ABI v1, additive: `ext4fs classify <image> <out>`. It answers the question
+ * the core cannot answer for itself, because the core never parses this pack's
+ * recipe: of the bytes that ride verbatim, which are STRUCTURE (superblock,
+ * GDT, bitmaps, inode tables, directory blocks, journal -- a rebuild needs
+ * them) and which are GARBAGE (free blocks and unwritten extents -- not needed
+ * by any member file, needed only to reproduce the image bit-for-bit)?
+ *
+ * Why the core wants that distinction: garbage is the only verbatim byte an
+ * operator can decide about. Structure cannot be dropped without losing the
+ * filesystem; garbage can -- at the price of image bit-exactness, which then
+ * has to be DECLARED, never silently repaired.
+ *
+ * Table (little-endian), written to <out>:
+ *
+ *   0   4   magic "GCFG"
+ *   4   4   u32 version = 1
+ *   8   4   u32 n_entries
+ *  12   4   u32 block_size
+ *  16  ..  n_entries x 24 B, off ascending, tiling [0, image_size)
+ *            { u64 off; u64 len; u8 cls; u8 flags; u16 rsvd }
+ *          cls   0 = meta_structure   1 = garbage   2 = member content
+ *          flags bit0 = zero_verified (the pack READ these bytes and they are
+ *                       all zero, so they can be reproduced without storing)
+ *                bit1 = reserved (compressible, when sampling lands)
+ *
+ * `zero_verified` is a MEASUREMENT, not an assumption from "the block is
+ * unallocated": a free block may hold bit-rot, and this pack's whole point is
+ * preserving it.
+ */
+#define GCFG_MAGIC "GCFG"
+#define GCFG_VER   1
+#define GCFG_ENT   24
+#define GCFG_CLS_META 0
+#define GCFG_CLS_GARB 1
+#define GCFG_CLS_MEMBER 2
+#define GCFG_F_ZERO 0x01
+
+typedef struct { uint64_t off, len; uint8_t cls, flags; } gcfg_ent;
+
+static int gcfg_cmp(const void *a, const void *b)
+{
+    const gcfg_ent *x = (const gcfg_ent *)a, *y = (const gcfg_ent *)b;
+    return x->off < y->off ? -1 : x->off > y->off;
+}
+
+static int gcfg_push(gcfg_ent **v, size_t *n, size_t *cap,
+                     uint64_t off, uint64_t len, int cls, int flags)
+{
+    if (!len)
+        return 0;
+    if (*n == *cap) {
+        size_t nc = *cap ? *cap * 2 : 256;
+        gcfg_ent *nv = (gcfg_ent *)realloc(*v, nc * sizeof *nv);
+        if (!nv) return -1;
+        *v = nv; *cap = nc;
+    }
+    (*v)[*n].off = off; (*v)[*n].len = len;
+    (*v)[*n].cls = (uint8_t)cls; (*v)[*n].flags = (uint8_t)flags;
+    (*n)++;
+    return 0;
+}
+
+/* Split [lo,hi) into block-granular runs of all-zero / not-all-zero. Whole
+ * blocks only: a partial tail block can never be elided, so it is reported as
+ * not-zero. Returns 0 on success, -1 on read error. */
+static int gcfg_split_zero(int fd, uint64_t lo, uint64_t hi, uint64_t bs,
+                           gcfg_ent **v, size_t *n, size_t *cap)
+{
+    uint8_t *buf = (uint8_t *)malloc((size_t)bs);
+    uint64_t b, run_start;
+    int run_zero = 0;
+    if (!buf) return -1;
+    run_start = lo;
+    for (b = lo; b < hi; b += bs) {
+        size_t got = (size_t)((hi - b) < bs ? (hi - b) : bs);
+        int z = 0;
+        if (got == bs) {
+            size_t k;
+            if (read_at(fd, b, buf, bs) != 0) { free(buf); return -1; }
+            z = 1;
+            for (k = 0; k < bs; k++)
+                if (buf[k]) { z = 0; break; }
+        }
+        if (b == lo) {
+            run_zero = z;
+            run_start = b;
+            continue;
+        }
+        if (z != run_zero) {
+            if (gcfg_push(v, n, cap, run_start, b - run_start,
+                          GCFG_CLS_GARB, run_zero ? GCFG_F_ZERO : 0) != 0) {
+                free(buf); return -1;
+            }
+            run_zero = z;
+            run_start = b;
+        }
+    }
+    if (run_start < hi &&
+        gcfg_push(v, n, cap, run_start, hi - run_start,
+                  GCFG_CLS_GARB, run_zero ? GCFG_F_ZERO : 0) != 0) {
+        free(buf); return -1;
+    }
+    free(buf);
+    return 0;
+}
+
+static int cmd_classify(const char *in, const char *out)
+{
+    fs_t *fs;
+    rrange_t *rr;
+    size_t n_rr, i, j, n = 0, cap = 0;
+    gcfg_ent *tab = NULL;
+    uint8_t hdr[16];
+    int ofd, rc = parse_all(in, &fs, &rr, &n_rr);
+
+    if (rc) return rc;
+    /* Ranges are the complement of member content; subtract the metadata
+     * proof from each, and what is left is garbage. */
+    for (i = 0; i < n_rr; i++) {
+        uint64_t cur = rr[i].off, end = rr[i].off + rr[i].len;
+        for (j = 0; j < fs->meta.n && cur < end; j++) {
+            uint64_t mlo = fs->meta.v[j].lo, mhi = fs->meta.v[j].hi;
+            if (mhi <= cur) continue;
+            if (mlo >= end) break;
+            if (mlo > cur) {
+                if (gcfg_split_zero(fs->fd, cur, mlo, fs->block_size,
+                                    &tab, &n, &cap) != 0) { rc = EX_IO; goto out; }
+            }
+            if (gcfg_push(&tab, &n, &cap, mlo < cur ? cur : mlo,
+                          (mhi > end ? end : mhi) - (mlo < cur ? cur : mlo),
+                          GCFG_CLS_META, 0) != 0) { rc = EX_IO; goto out; }
+            cur = mhi > end ? end : mhi;
+        }
+        if (cur < end &&
+            gcfg_split_zero(fs->fd, cur, end, fs->block_size,
+                            &tab, &n, &cap) != 0) { rc = EX_IO; goto out; }
+    }
+    /* member content, in image order, so the table tiles the whole image */
+    for (i = 0; i < fs->n_gr; i++)
+        if (gcfg_push(&tab, &n, &cap, fs->gr[i].image, fs->gr[i].len,
+                      GCFG_CLS_MEMBER, 0) != 0) { rc = EX_IO; goto out; }
+
+    /* sort by offset: the three sources are built in three orders */
+    qsort(tab, n, sizeof *tab, gcfg_cmp);
+
+    ofd = open(out, O_WRONLY | O_CREAT | O_TRUNC, 0600);
+    if (ofd < 0) { rc = EX_IO; goto out; }
+    memset(hdr, 0, sizeof hdr);
+    memcpy(hdr, GCFG_MAGIC, 4);
+    put32(hdr + 4, GCFG_VER);
+    put32(hdr + 8, (uint32_t)n);
+    put32(hdr + 12, fs->block_size);
+    if (write_at(ofd, 0, hdr, sizeof hdr) != 0) { close(ofd); rc = EX_IO; goto out; }
+    {
+        uint64_t off = 16;
+        for (i = 0; i < n; i++) {
+            uint8_t e[GCFG_ENT];
+            memset(e, 0, sizeof e);
+            put64(e + 0, tab[i].off);
+            put64(e + 8, tab[i].len);
+            e[16] = tab[i].cls;
+            e[17] = tab[i].flags;
+            if (write_at(ofd, off, e, sizeof e) != 0) { close(ofd); rc = EX_IO; goto out; }
+            off += sizeof e;
+        }
+    }
+    if (close(ofd) != 0) rc = EX_IO;
+out:
+    free(tab);
+    free(rr);
+    fs_free(fs);
+    return rc;
+}
+
 /* ---- rebuild: the recipe alone reproduces the original ---- */
 typedef struct {
     uint32_t idx;
@@ -1680,5 +1858,7 @@ int main(int argc, char **argv)
         return cmd_map(argv[2], argv[3]);
     if (!strcmp(argv[1], "estimate") && argc == 3)
         return cmd_estimate(argv[2]);
+    if (!strcmp(argv[1], "classify") && argc == 4)
+        return cmd_classify(argv[2], argv[3]);
     return EX_USAGE;
 }
