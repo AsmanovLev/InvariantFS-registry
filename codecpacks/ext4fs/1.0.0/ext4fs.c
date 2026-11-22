@@ -1608,7 +1608,7 @@ out:
  * tail, an unformatted span) declares it here and the core stores nothing and
  * serves zeros. The proof is the pack's obligation: a region may be declared
  * zero only after READING it, because a free block may hold bit-rot. */
-typedef struct { uint64_t off, len, src_off; uint32_t idx; uint8_t kind; } map_seg;
+typedef struct { uint64_t off, len, src_off, logical; uint32_t idx; uint8_t kind; } map_seg;
 
 static int map_seg_cmp(const void *a, const void *b)
 {
@@ -1642,7 +1642,7 @@ static int cmd_map(const char *in, const char *out)
         }                                                                    \
         seg[n_seg].off = (o); seg[n_seg].len = (l);                          \
         seg[n_seg].kind = (uint8_t)(kd); seg[n_seg].idx = 0;                 \
-        seg[n_seg].src_off = 0; n_seg++;                                     \
+        seg[n_seg].src_off = 0; seg[n_seg].logical = 0; n_seg++;                                     \
     } while (0)
 
     for (i = 0; i < n_rr; i++) {
@@ -1660,6 +1660,13 @@ static int cmd_map(const char *in, const char *out)
     for (i = 0; i < fs->n_gr; i++) {
         SEG_PUSH(fs->gr[i].image, fs->gr[i].len, 1);
         seg[n_seg - 1].idx = fs->gr[i].idx;
+        /* A member is stored ONCE and named by several extents, so a member
+         * entry must carry WHICH part of the member it serves: the logical
+         * offset, which MRMP keeps in the src_off field. Dropping it (every
+         * extent claiming logical 0) made the core compare the second
+         * extent's image bytes against the member's FIRST bytes -- that was
+         * the guard's "memcmp failed". */
+        seg[n_seg - 1].logical = fs->gr[i].logical;
     }
     if (n_seg == 0 || n_seg > ABI_MAP_MAX_ENTS) {
         note("map entry count", n_seg, 0);
@@ -1669,22 +1676,27 @@ static int cmd_map(const char *in, const char *out)
     }
     qsort(seg, n_seg, sizeof *seg, map_seg_cmp);
 
-    /* OPEN BUG, so this refuses instead of guessing: with elided zero runs the
-     * member (kind 1) offsets this map emits do not match where the image
-     * actually holds the member. Measured on a 128 MiB ext4 with one 400 KB
-     * file: the map says member idx 13 sits at image offset 9 178 112, while
-     * its bytes are at 8 209 408, so the core's guard (which re-reads through
-     * the map and compares with the original image) refuses with "memcmp
-     * failed ent=18". That guard is why this is a refusal and not silent
-     * corruption. Until the offset accounting is fixed, a container with
-     * elided zeros gets no map -- and a lane with no map declines, which is
-     * the pre-elision behaviour. Remove this block when the offsets agree. */
+    /* REFUSE while elision cannot be read back.
+     *
+     * With the logical offsets fixed the map is now accepted, the guard passes
+     * and decomposition COMPLETES -- members appear -- but the container then
+     * cannot be read: `invf-cat` exits 1 with "ext4fs: mapped container read
+     * f..." and produces 0 bytes of 134 217 728. A member that exists and a
+     * container that cannot be read is exactly the class of failure this
+     * project refuses to ship, so a map with elided zeros declines until the
+     * read path through it is proven: `cmp` of the container against its source
+     * image after a sweep, and 31 sweeps without drift.
+     *
+     * MEASURED, 128 MiB ext4 with two members, in the core tree at f66ca44:
+     *   sweep ok, members 5 (!mbr0012-ino12, !mbr0013-payload.bin,
+     *   !mbr0014-note.txt, !mbrmap, !mbrt), then invf-cat rc=1, 0 bytes.
+     * Remove this block in the commit that makes that read bit-exact. */
     {
         size_t z = 0, q;
         for (q = 0; q < n_seg; q++)
             if (seg[q].kind == 3) z++;
         if (z) {
-            note("map: elided zero regions, offsets not yet proven", z, 0);
+            note("map: elided zero regions, read path unproven", z, 0);
             free(seg);
             rc = EX_DECLINE;
             goto out;
@@ -1719,7 +1731,8 @@ static int cmd_map(const char *in, const char *out)
         put64(blob + wp + 8, seg[i].len);
         blob[wp + 16] = seg[i].kind;
         put32(blob + wp + 17, seg[i].kind == 1 ? seg[i].idx : 0);
-        put64(blob + wp + 21, seg[i].kind == 0 ? rsrc : 0);
+        put64(blob + wp + 21, seg[i].kind == 0 ? rsrc
+                             : (seg[i].kind == 1 ? seg[i].logical : 0));
         if (seg[i].kind == 0) rsrc += seg[i].len;
         wp += 29;
         pos = seg[i].off + seg[i].len;
