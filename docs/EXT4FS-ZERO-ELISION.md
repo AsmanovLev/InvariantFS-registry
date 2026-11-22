@@ -35,40 +35,55 @@ So on a clean image 239.5 of 256 MiB can be reproduced without being stored, and
 on a dirty image the pack *says so* instead of guessing. Measured sidecar cost:
 **544 bytes** for a 128 MiB image (recipe 133 785 184 B).
 
-## Format: E4RCP002
+## Format: E4RCP002 — and why it needs no header growth
 
-```
-   0   8   magic "E4RCP002"
-   8   8   u64 image_size
-  16   4   u32 block_size
-  20   4   u32 n_members
-  24   4   u32 n_ranges
-  28   4   u32 n_extents
-  32   4   u32 n_zranges            <- new
-  36   4   u32 reserved0            <- new (keeps every table 8-aligned)
-  40  ..   member table   n_members x 24 B
-      ..   extent map     n_extents x 32 B
-      ..   range table    n_ranges  x 16 B   (off, len) — only NON-zero runs
-      ..   zrange table   n_zranges x 16 B   (off, len) — reproduced as zeros
-      ..   range bytes    the bytes of every range, concatenated in order
-```
+The E4RCP blob is the PACK's recipe; the core stores it as opaque bytes and
+hands it back. So a format change here is not a core ABI event at all — the
+only code that reads it is this pack's own `rebuild`, which ships in the same
+binary. (The core does look inside one place, the SPT0 savepoint walk, because
+it tries to parse a container record as an AST — a known wart, and orthogonal:
+whatever bytes the blob has, they are pinned as a range.)
 
-`data_base = 40 + 24*M + 32*E + 16*R + 16*Z`. Zero ranges carry no bytes.
+That also means the zero ranges do not need to be written down:
+
+    v2 semantics: the range table lists the NON-ZERO runs only.
+                  The complement in [0, image_size) is zeros.
+
+which is exactly what a sparse output file gives for free, since `rebuild`
+already writes every range at its ABSOLUTE image offset (`copy_range(rfd, woff,
+ofd, rr[i].off, rr[i].len)`), and creates the output with O_TRUNC. The gaps
+become holes; holes read as zeros.
+
+So: magic bump `E4RCP001` -> `E4RCP002`, header stays 32 bytes, no zrange
+table, `recipe_data_base()` untouched. The only structural edit is the proof in
+`rebuild`, which today requires ranges + member extents to TILE the image:
+
+    /* partition proof: ranges + member extents must tile [0, image_size) */
+
+In v2 that becomes "disjoint, in bounds, ascending" — gaps are legal and mean
+zeros. Keeping "tile" would fail every v2 recipe, which is also why the magic
+has to change rather than the meaning silently shifting.
+
+Compatibility, the one that actually matters: volumes decomposed by the 1.0.0
+pack carry E4RCP001 recipes, and their `rebuild` must keep restoring them. So
+`rebuild` dispatches on the magic (001 = old tiling semantics, 002 = holes are
+zeros) and writes 002 for new work. A pack upgrade must never orphan an
+existing volume.
 
 ## Touch points
 
 | where | change |
 |---|---|
-| `ext4fs.c:181` | `RECIPE_MAGIC`, `RECIPE_HDR` 32 → 40 |
-| `ext4fs.c:1217` `recipe_data_base()` | add `16*n_zr` |
-| `ext4fs.c:1240` `write_recipe_header()` | write `n_zranges`, the zrange table, and skip zero runs in the range bytes |
+| `ext4fs.c:181` | `RECIPE_MAGIC` → `E4RCP002`; `RECIPE_HDR` stays 32 |
+| `ext4fs.c:1240` `write_recipe_header()` | unchanged apart from the magic |
+| `cmd_rebuild` | dispatch on the magic; v2 relaxes the tiling proof to disjointness |
 | `ext4fs.c:1516` `cmd_strip` | split each range with the existing `gcfg_split_zero()` (already written for `classify`) and copy only the non-zero runs |
-| `ext4fs.c:1661` `cmd_rebuild` | write zeros over the zrange table, then ranges, then splice members |
+| `cmd_rebuild` | v2: nothing to write for holes — the gaps already read as zeros |
 | `ext4fs.c:1420` `cmd_map` | **decline** (`EX_DECLINE`) when `n_zranges > 0`: the MRMP map points at recipe-blob offsets, and a zero range has no bytes to point at. The core then falls back to rebuild-based reads instead of seeking into garbage. Making seek work again is the follow-up: a `type=2` ("zeros") MRMP entry plus a core-side reader (~30 lines, `cpack_map_parse`). |
 | manifest | `min_read` bump if the core must know |
 
-Fail-closed by construction: an old core reads `E4RCP002`, sees an unknown
-magic, and refuses. Nothing silently mis-decodes.
+Fail-closed within the pack: an unknown magic is refused by `rebuild`, and a
+v1 recipe keeps working through the v1 branch.
 
 ## Acceptance (in the core tree)
 
