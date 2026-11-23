@@ -38,5 +38,13 @@ rebuild = bin/fatfs rebuild {recipe} {dir} {out}
 # WP16b: the map command makes the pack SEEKABLE (CAP_SEEK): reads splice
 # locally from the recipe + member siblings and never exec the pack.
 map = bin/fatfs map {in} {out}
+# Opt into the FS-owned decomposition generation (WP-Q2R3). The engine's
+# parse_manifest() reads this into def.decomp_gen (src/codecs/codec.c:512)
+# and stamps the pack's `generation` into a v2 (MRM2) map header, so a pack
+# without this key reads as "does not decompose" and a later generation bump
+# re-decomposes nothing. This pack renders a v1 (MRMP) map today, so the
+# stamp is a no-op -- and correct the day a map becomes v2. Same value the
+# engine's own copy of this manifest carries.
+decomp_gen = 1
 # decode working set = sum(member usize) + 64 MiB (FAT table + walk state)
 estimate = bin/fatfs estimate {in}
