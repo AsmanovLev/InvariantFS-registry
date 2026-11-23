@@ -11,6 +11,7 @@
  * GENERIC_GUARD. The marker walk streams through a bounded window: SOF
  * always precedes SOS, but APPn segments (EXIF, embedded thumbnails) can
  * be large, so the file is never held whole.
+ *
  */
 #define _FILE_OFFSET_BITS 64
 #define _POSIX_C_SOURCE 200809L   /* fseeko */
@@ -38,16 +39,20 @@ static int need(uint64_t p, size_t n)
 
 static uint8_t at(uint64_t p) { return win[(size_t)(p - wbase)]; }
 
-int main(int argc, char **argv)
+/* The SOF marker-walk estimator both the CLI and the plugin estimate export
+ * call. Prints w*h*3 (or 0 when the geometry is unknown) and returns the
+ * exit status: 0 normally, 1 when the input is unreadable. */
+static int cmd_estimate(const char *path)
 {
     uint64_t p = 2;   /* past SOI (FF D8) */
     unsigned long long est = 0;
 
-    if (argc != 3 || strcmp(argv[1], "estimate") != 0) {
-        fprintf(stderr, "usage: jxlest estimate <in.jpg>\n");
-        return 2;
-    }
-    f = fopen(argv[2], "rb");
+    /* A fork-guarded plugin child inherits whatever window state the worker
+     * happens to hold; the walk always restarts at SOI, so reset it. A CLI
+     * process calls this once, where the reset is a no-op. */
+    wbase = 0;
+    wlen = 0;
+    f = fopen(path, "rb");
     if (!f) return 1;
 
     /* marker walk for SOF0/SOF1/SOF2 (FFC0..FFC2: baseline/extended/
@@ -85,4 +90,13 @@ out:
     fclose(f);
     printf("%llu\n", est);
     return 0;
+}
+
+int main(int argc, char **argv)
+{
+    if (argc != 3 || strcmp(argv[1], "estimate") != 0) {
+        fprintf(stderr, "usage: jxlest estimate <in.jpg>\n");
+        return 2;
+    }
+    return cmd_estimate(argv[2]);
 }

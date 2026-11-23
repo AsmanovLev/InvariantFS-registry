@@ -22,8 +22,15 @@ replaces =
 conflicts =
 dec_mem = 0
 generation = 1
-depends = family:raw_image
-requires = family:raw_image
+# `requires` is the engine's alias (parse_manifest -> def.requires, probed at
+# src/codecs/codec.c:1036) and must name EXECUTABLES: the helper execs cjxl and
+# djxl on the normalized pixels, so the pack is unusable without them. It read
+# `family:raw_image` here, which is not a tool name -- pack_tool_resolvable()
+# looks for a file by that name in $INVFS_TOOLS / /usr/lib/invfs/tools /
+# <pack>/bin / PATH, never found one, and the pack stayed permanently
+# UNAVAILABLE. The registry manager's `depends` list is the same two tools.
+depends = cjxl,djxl
+requires = cjxl,djxl
 # DICM at offset 128 (DICOM), P5/P6 (PNM), BM (BMP), II2A/MM2A (TIFF)
 sniff.magic = 4449434D
 sniff.offset = 128

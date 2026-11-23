@@ -30,8 +30,13 @@ replaces = builtin:jxl
 conflicts =
 dec_mem = 0
 generation = 1
-depends =
-requires =
+# cjxl/djxl are the encode/decode tools, and `requires` is HOW THE ENGINE
+# learns that: parse_manifest reads it into def.requires and pack_probe_impl
+# refuses the pack unless every token resolves as an executable
+# (src/codecs/codec.c:1036). Kept byte-equal to the engine's own copy of this
+# manifest; `depends` is the same list in the registry manager's dialect.
+depends = cjxl,djxl
+requires = cjxl,djxl
 # JPEG SOI is the input claim. The JXL box + raw codestream magics ride
 # along for the registry-sniff users (the WP10 UNCOMPRESSIBLE retry gate).
 sniff.magic = FFD8FF
