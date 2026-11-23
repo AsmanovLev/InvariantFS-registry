@@ -388,7 +388,10 @@
       ],
       "conflicts": [],
       "min_read": "0.3.0",
-      "depends": [],
+      "depends": [
+        "cjxl",
+        "djxl"
+      ],
       "recommends": [],
       "manifest": "codecpacks/jxl/1.0.0/manifest",
       "sha256": "codecpacks/jxl/1.0.0/sha256",
@@ -564,7 +567,9 @@
       "replaces": [],
       "conflicts": [],
       "min_read": "0.3.0",
-      "depends": [],
+      "depends": [
+        "7zz"
+      ],
       "recommends": [],
       "manifest": "codecpacks/p7z/1.0.0/manifest",
       "sha256": "codecpacks/p7z/1.0.0/sha256",
@@ -655,7 +660,8 @@
       "conflicts": [],
       "min_read": "0.3.0",
       "depends": [
-        "family:raw_image"
+        "cjxl",
+        "djxl"
       ],
       "recommends": [],
       "manifest": "codecpacks/raw_image/1.0.0/manifest",
