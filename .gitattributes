@@ -1,0 +1,15 @@
+* text=auto
+
+# The engine's vendored copy of these trees is BYTE-COMPARED against this
+# checkout (InvariantFS tools/check-codecpack-sync.sh, layer C), and the
+# .ivpack client contract cmp's `manifest` against the installed copy. A host
+# whose checkout is CRLF turns every mirror pack into a false drift report --
+# measured in the engine repo on the Windows box: raw_image.py and splt.py
+# "differed" by 714 and 163 lines while their git blobs were identical
+# (61a225e, 2f6c255). Pin the line endings instead of loosening the compare.
+codecpacks/** text eol=lf
+include/**    text eol=lf
+*.sh          text eol=lf
+*.py          text eol=lf
+*.md          text eol=lf
+Makefile      text eol=lf
