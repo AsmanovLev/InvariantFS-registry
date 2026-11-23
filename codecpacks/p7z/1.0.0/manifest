@@ -36,8 +36,15 @@ replaces =
 conflicts =
 dec_mem = 0
 generation = 1
-depends =
-requires =
+# 7zz decodes the LZMA-compressed 7z header (the format default). Both keys
+# carry it: `requires` is the engine's alias -- parse_manifest reads it into
+# def.requires, pack_probe_impl refuses the pack unless it resolves
+# (src/codecs/codec.c:1036), and the helper sandbox whitelists it as a
+# grandchild tool (src/core/helper_exec.c:573, wired at vol_cpack.c:744) --
+# and `depends` is the same list in the registry manager's dialect, which is
+# what `invfs-pack install p7z` checks and prints a distro command for.
+depends = 7zz
+requires = 7zz
 sniff.magic = 377ABCAF271C
 sniff.offset = 0
 sniff.ext = 7z
@@ -46,4 +53,21 @@ extract = bin/p7z extract {in} {idx} {out}
 strip = bin/p7z strip {in} {out}
 rebuild = bin/p7z rebuild {recipe} {dir} {out}
 map = bin/p7z map {in} {out}
+# WP140: the whole member set in ONE header parse. `extract` re-parses the
+# entire 7z header (and fork/execs 7zz to LZMA-decode the default compressed
+# header) on every call, so an FS lane that exec'd it once per member paid
+# O(n^2) in the header size -- ~13 days at 84k members. This command parses
+# once and writes "<dir>/<idx>" for every member the enumerate table at {dir}
+# announces: the same stream_copy over the same (off,len) extents, so the
+# bytes are bit-identical to the per-member path by construction. Optional: a
+# pack without this key is still extracted one member per exec, as before.
+batch = bin/p7z extract_batch {in} {dir} {out}
+# Opt into the FS-owned decomposition generation (WP-Q2R3). The engine's
+# parse_manifest() reads this into def.decomp_gen (src/codecs/codec.c:512)
+# and stamps the pack's `generation` into a v2 (MRM2) map header, so a pack
+# without this key reads as "does not decompose" and a later generation bump
+# re-decomposes nothing. This pack renders a v1 (MRMP) map today, so the
+# stamp is a no-op -- and correct the day a map becomes v2. Same value the
+# engine's own copy of this manifest carries.
+decomp_gen = 1
 estimate = bin/p7z estimate {in}
